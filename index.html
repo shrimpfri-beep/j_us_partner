@@ -468,8 +468,8 @@
   </div>
 
   <!-- 모달: 관리자 -->
-  <div id="adminModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto">
-    <div class="neon-card rounded-2xl max-w-6xl w-full p-4 sm:p-5 space-y-4 my-4">
+  <div id="adminModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm p-2 sm:p-4 overflow-y-auto overscroll-contain">
+    <div class="neon-card rounded-2xl max-w-6xl w-full mx-auto p-4 sm:p-5 space-y-4 my-2 sm:my-6">
       <div id="adminLogin" class="max-w-sm mx-auto space-y-3 py-6">
         <div class="flex items-center justify-between"><h3 class="text-base font-black text-white">🔑 관리자 코드 입력</h3><button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg">✕</button></div>
         <input id="adminCodeInput" type="password" inputmode="numeric" placeholder="관리자 코드" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm" onkeydown="if(event.key==='Enter')checkAdminCode()" />
@@ -1641,17 +1641,33 @@ const TRK = (function () {
   };
   let play = null, lastS = 0, lastP = 0, remoteOk = !!DB, visible = !document.hidden;
 
-  function send(path, body, tok) {
-    try {
-      fetch(fbUrl(path, tok), { method: 'PUT', body, keepalive: body.length < 60000, headers: { 'Content-Type': 'application/json' } })
-        .then(r => { remoteOk = r.ok; }).catch(() => { remoteOk = false; });
-    } catch (e) { remoteOk = false; }
-  }
+  // 경로별 직렬 전송: 이전 요청이 끝난 뒤 최신 내용만 보낸다 (늦게 도착한 옛 데이터가 덮어쓰는 문제 방지)
+  const queue = {};
   function put(path, obj) {
     if (!DB) return;
-    const body = JSON.stringify(obj), t = fbTokenSync();
-    if (t || !FIREBASE_API_KEY) send(path, body, t);
-    else fbToken().then(tk => send(path, body, tk));
+    const q = queue[path] || (queue[path] = { busy: false, body: null });
+    q.body = JSON.stringify(obj);
+    if (!q.busy) flush(path);
+  }
+  async function flush(path) {
+    const q = queue[path];
+    if (!q.body) { q.busy = false; return; }
+    q.busy = true;
+    const body = q.body; q.body = null;
+    let tk = fbTokenSync();
+    if (!tk && FIREBASE_API_KEY) tk = await fbToken();
+    try {
+      const r = await fetch(fbUrl(path, tk), { method: 'PUT', body, headers: { 'Content-Type': 'application/json' } });
+      remoteOk = r.ok;
+    } catch (e) { remoteOk = false; }
+    flush(path);
+  }
+  // 페이지를 떠날 때: 대기 없이 최신 내용을 즉시 전송
+  function putNow(path, obj) {
+    if (!DB) return;
+    const body = JSON.stringify(obj);
+    if (queue[path]) queue[path].body = null;
+    try { fetch(fbUrl(path, fbTokenSync()), { method: 'PUT', body, keepalive: body.length < 60000, headers: { 'Content-Type': 'application/json' } }); } catch (e) { }
   }
   function saveSession(force) {
     const now = Date.now(); if (!force && now - lastS < 15000) return; lastS = now;
@@ -1674,7 +1690,8 @@ const TRK = (function () {
   setInterval(() => { if (visible) { sess.dur++; if (play) play.dur = (play.dur || 0) + 1; } saveSession(false); }, 1000);
   document.addEventListener('visibilitychange', () => { visible = !document.hidden; if (!visible) { saveSession(true); savePlay(true); } });
   window.addEventListener('pagehide', () => {
-    saveSession(true); savePlay(true);
+    sess.last = Date.now(); putNow(`sessions/${sess.sid}`, sess);
+    if (play) { play.last = Date.now(); putNow(`plays/${play.pid}`, play); }
     if (DB) try { fetch(fbUrl(`presence/${sess.sid}`, fbTokenSync()), { method: 'DELETE', keepalive: true }); } catch (e) { }
   });
 
@@ -2247,8 +2264,8 @@ function closeExpertModal() { $('expertModal').classList.add('hidden'); }
    관리자 대시보드
    ===================================================================== */
 let ADM = null, admTimer = null;
-function openAdminModal() { $('adminModal').classList.remove('hidden'); $('adminLogin').classList.remove('hidden'); $('adminDash').classList.add('hidden'); $('adminCodeInput').value = ''; setTimeout(() => $('adminCodeInput').focus(), 50); }
-function closeAdminModal() { $('adminModal').classList.add('hidden'); clearInterval(admTimer); }
+function openAdminModal() { $('adminModal').classList.remove('hidden'); $('adminModal').scrollTop = 0; document.body.style.overflow = 'hidden'; $('adminLogin').classList.remove('hidden'); $('adminDash').classList.add('hidden'); $('adminCodeInput').value = ''; setTimeout(() => $('adminCodeInput').focus(), 50); }
+function closeAdminModal() { $('adminModal').classList.add('hidden'); document.body.style.overflow = ''; clearInterval(admTimer); }
 function checkAdminCode() {
   if ($('adminCodeInput').value.trim() !== ADMIN_CODE) { $('adminErr').classList.remove('hidden'); return; }
   $('adminErr').classList.add('hidden'); $('adminLogin').classList.add('hidden'); $('adminDash').classList.remove('hidden');
