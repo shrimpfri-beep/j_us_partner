@@ -1612,7 +1612,8 @@ if (typeof module !== 'undefined') module.exports = KL;
 const FIREBASE_DB_URL = 'https://earth-life-gacha-default-rtdb.asia-southeast1.firebasedatabase.app';
 // 익명 인증용 웹 API 키 (Firebase 웹 앱 공개 키 — 데이터 보호는 DB 규칙 'auth != null'이 담당)
 const FIREBASE_API_KEY = 'AIzaSyDOZb9MyYZEIhZJnjC7Gdza2srhkufDX14';
-const DATA_ROOT = 'klife_v3';      // 같은 Firebase 프로젝트를 다른 게임과 함께 써도 섞이지 않도록 분리
+const DATA_ROOT = 'j_us_partner';  // 이 게임 전용 Firebase 공간 (지구인 생존기 earth_life/ 와 분리)
+const LEGACY_ROOT = 'klife_v3';    // 공간 분리 이전 기록 (읽기 전용으로 통계에 합침)
 const ADMIN_CODE = '8000';
 // ▲▲▲ ---------------------------------------------------------------- ▲▲▲
 
@@ -1620,6 +1621,7 @@ const fm = KL.fm;
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DB = FIREBASE_DB_URL ? FIREBASE_DB_URL.replace(/\/+$/, '') + '/' + DATA_ROOT : '';
+const DB_LEGACY = FIREBASE_DB_URL ? FIREBASE_DB_URL.replace(/\/+$/, '') + '/' + LEGACY_ROOT : '';
 
 // ---------- Firebase 익명 인증 (REST) ----------
 const FB = { tok: '', exp: 0, refresh: '', p: null };
@@ -1810,7 +1812,11 @@ const TRK = (function () {
         const tk = await fbToken();
         const get = path => fetch(fbUrl(path, tk)).then(async r => { const j = await r.json(); if (!r.ok) throw new Error((j && j.error) || ('HTTP ' + r.status)); return j; });
         const [s, p] = await Promise.all([get('sessions'), get('plays')]);
-        return { src: 'firebase', sessions: Object.values(s || {}), plays: Object.values(p || {}) };
+        // 예전 공간(klife_v3) 기록도 합치기 — 실패해도 무시
+        const legacy = path => fetch(`${DB_LEGACY}/${path}.json${tk ? '?auth=' + encodeURIComponent(tk) : ''}`).then(r => r.ok ? r.json() : null).catch(() => null);
+        const [ls2, lp2] = await Promise.all([legacy('sessions'), legacy('plays')]);
+        const S2 = Object.assign({}, ls2 || {}, s || {}), P2 = Object.assign({}, lp2 || {}, p || {});
+        return { src: 'firebase', sessions: Object.values(S2), plays: Object.values(P2) };
       } catch (e) {
         return { src: 'local-fallback', err: String(e), sessions: Object.values(ls(LS_S, {})), plays: Object.values(ls(LS_P, {})) };
       }
@@ -1951,7 +1957,8 @@ async function loadRemoteSave() {
   $('rlMsg').textContent = '불러오는 중…';
   try {
     const key = await saveKeyOf(nick, pin);
-    const sv = await TRK.getPath(`saves/${key}`);
+    let sv = await TRK.getPath(`saves/${key}`);
+    if (!sv || !sv.seed) { try { const tk = await fbToken(); sv = await fetch(`${DB_LEGACY}/saves/${key}.json?auth=${encodeURIComponent(tk)}`).then(r => r.ok ? r.json() : null); } catch (e) { } }
     if (!sv || !sv.seed) { $('rlMsg').textContent = '저장된 인생을 찾지 못했어요. 닉네임·PIN을 확인해 주세요.'; return; }
     SAVE.key = key; SAVE.setProfile({ key });
     $('rlMsg').textContent = '✅ 불러왔어요!';
@@ -2444,7 +2451,7 @@ async function loadAdminData() {
   ADM = await TRK.loadAll();
   const n = new Date().toLocaleTimeString('ko-KR');
   $('admSourceText').innerHTML = ADM.src === 'firebase' ? `🟢 Firebase 실시간 DB 연결 · 모든 기기 데이터 · ${n} 갱신 (20초 자동)`
-    : ADM.src === 'local-fallback' ? `🟠 Firebase 연결 실패 → 이 브라우저 데이터만 표시 (${esc(ADM.err)})${/denied/i.test(ADM.err || '') ? ' — Firebase 규칙에 klife_v3 경로를 추가해야 합니다' : ''}`
+    : ADM.src === 'local-fallback' ? `🟠 Firebase 연결 실패 → 이 브라우저 데이터만 표시 (${esc(ADM.err)})${/denied/i.test(ADM.err || '') ? ' — Firebase 규칙에 j_us_partner 경로를 추가해야 합니다' : ''}`
       : `🟡 Firebase 미설정 → <b>이 브라우저에서 플레이한 데이터만</b> 표시됩니다. app 코드 상단 FIREBASE_DB_URL을 설정하세요.`;
   renderAdmin();
 }
