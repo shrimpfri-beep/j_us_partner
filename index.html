@@ -61,6 +61,7 @@
 
     <!-- ========== 시작 화면 ========== -->
     <section id="startScreen" class="max-w-2xl mx-auto my-2 space-y-4">
+      <div id="resumeBox" class="hidden neon-card neon-emerald rounded-2xl p-4 sm:p-5"></div>
 
       <!-- STEP 1: 프로필 -->
       <div id="step1" class="neon-card rounded-2xl p-5 sm:p-7 shadow-2xl">
@@ -85,6 +86,20 @@
               <button onclick="suggestNicknames()" class="shrink-0 px-3 py-2.5 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-200 border border-indigo-500/40 text-xs font-bold">🎲 추천</button>
             </div>
             <div id="nickSuggest" class="flex flex-wrap gap-1.5 mt-2"></div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">🔐 이어하기 PIN <span class="text-slate-500 font-normal">(숫자 4자리 · 선택)</span></label>
+            <input id="pinInput" type="password" inputmode="numeric" maxlength="4" placeholder="예: 1234 — 입력하면 폰·PC 어디서든 이어하기" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-emerald-400" />
+            <p class="text-[11px] text-slate-500 mt-1">같은 기기는 PIN 없이도 자동으로 이어집니다. 다른 기기에서는 <b>닉네임 + PIN</b>으로 불러와요.</p>
+            <button type="button" onclick="toggleRemoteLoad()" class="mt-2 text-xs font-bold text-cyan-300 underline underline-offset-2">📲 다른 기기에서 하던 인생 불러오기</button>
+            <div id="remoteLoadBox" class="hidden mt-2 p-3 rounded-xl bg-slate-950 border border-cyan-500/30 space-y-2">
+              <div class="grid grid-cols-2 gap-2">
+                <input id="rlNick" type="text" maxlength="16" placeholder="닉네임" class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-sm" />
+                <input id="rlPin" type="password" inputmode="numeric" maxlength="4" placeholder="PIN 4자리" class="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-sm" />
+              </div>
+              <button type="button" onclick="loadRemoteSave()" class="w-full py-2 rounded-lg bg-cyan-500 text-slate-950 text-xs font-black">불러오기</button>
+              <p id="rlMsg" class="text-[11px] text-slate-400"></p>
+            </div>
           </div>
           <p class="text-[11px] text-slate-400 leading-relaxed bg-slate-900/70 border border-slate-800 rounded-xl p-2.5">🔒 연령대·성별·닉네임과 게임 속 선택은 이름·연락처 없이 <b>익명 통계</b>로만 저장되어 콘텐츠 개선에 쓰입니다. 실명이나 연락처는 닉네임에 넣지 마세요.</p>
           <button onclick="goStep2()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-black text-sm">다음 → 인생관 고르기</button>
@@ -1144,7 +1159,12 @@ const KL = (function () {
       const item = L.queue.shift();
       const res = item(L);
       if (res && res.key) {
-        if (L.policy) applyDecision(L, res, L.policy(L, res), 'auto');
+        if (L.replay && L.replay.length && L.replay[0].k === res.key) {
+          const c = L.replay.shift();
+          applyDecision(L, res, c.o, c.src || 'manual');
+          const last = L.choices[L.choices.length - 1]; if (last && c.dt) last.dt = c.dt;
+        }
+        else if (L.policy) applyDecision(L, res, L.policy(L, res), 'auto');
         else { L.pending = res; return; }
       }
     }
@@ -1538,7 +1558,40 @@ const KL = (function () {
     return { n, res };
   }
 
+
+  // ---------- 저장·복원 (시드 + 선택 기록 + 행동 기록을 그대로 재생 → 같은 인생이 정확히 재현됨) ----------
+  function serialize(L) {
+    return {
+      v: 3, seed: L.seed, opts: { persona: L.persona, econ: L.econ, initPlan: L.initPlan },
+      age: L.age, alive: L.alive,
+      choices: L.choices.map(c => ({ k: c.k, o: c.o, age: c.age, src: c.src, dt: c.dt || 0 })),
+      actions: L.actions.map(x => ({ age: x.age, t: x.t }))
+    };
+  }
+  function restore(sv) {
+    const L = createLife(sv.seed, sv.opts || {});
+    L.replay = (sv.choices || []).slice();
+    const acts = (sv.actions || []).slice();
+    const applyBetween = () => {
+      while (L.replay.length && L.replay[0].k === 'remodel' && L.replay[0].age <= L.age) {
+        const c = L.replay.shift();
+        remodel(L, c.o === 'none' ? [] : c.o.split('+'));
+      }
+      while (acts.length && acts[0].age <= L.age) doAction(L, acts.shift().t);
+    };
+    applyBetween();
+    let guard = 0;
+    while (L.alive && L.age < sv.age && guard++ < 130) {
+      if (L.pending) break; // 기록에 없는 결정에서 멈춤
+      step(L);
+      if (L.pending) break;
+      applyBetween();
+    }
+    L.replay = null;
+    return L;
+  }
   return {
+    serialize, restore,
     S, MAX_AGE, TIERS, DNA, INS, SHOP_IDS, PERSONAS, TAGS, STRATEGIES, INVEST, DEC, MILESTONES, MILESTONE_AGES,
     createLife, step, resolve, doAction, remodel, autoPick, autoAction, treatRule, setIns, canBuy, buyReason, estMonthly,
     monthlyPremium, shield, netWorth, kidAge, insList, fm, counterfactuals, monteCarlo, runHeadless, summarize, medCalc,
@@ -1707,7 +1760,7 @@ const TRK = (function () {
   function startPlay(L, meta) {
     sess.plays++;
     play = {
-      pid: uid('p'), sid: sess.sid, vid, start: Date.now(), last: Date.now(), dur: 0, stage: STAGE_IDX.gacha,
+      pid: meta.pid || uid('p'), sid: sess.sid, vid, start: meta.start || Date.now(), last: Date.now(), dur: meta.dur || 0, stage: STAGE_IDX.gacha, resumed: meta.resumed || 0, uk: sess.uk || '',
       nick: sess.nick, ageGroup: sess.ageGroup, gender: sess.gender, persona: meta.persona, auto: meta.auto, econ: meta.econ, plan: meta.plan,
       ch: { g: L.gender, tier: L.tier.tier, dna: L.dna.id, sib: L.siblings.length, ins0: Object.keys(L.ins).join('+') || 'none' },
       choices: [], actions: { checkup: 0, exercise: 0, study: 0, remodel: 0 }, interests: {}, explicit: '', autoSwitch: 0,
@@ -1745,6 +1798,12 @@ const TRK = (function () {
     saveSession(false); savePlay(false);
   }
 
+  async function getPath(path) {
+    if (!DB) return null;
+    const tk = await fbToken();
+    const r = await fetch(fbUrl(path, tk)); if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }
   async function loadAll() {
     if (DB) {
       try {
@@ -1767,7 +1826,7 @@ const TRK = (function () {
     } catch (e) { return 1; }
   }
   saveSession(true);
-  return { sess, get play() { return play; }, stage, profile, startPlay, updatePlay, endPlay, action, setPending, mark, view, loadAll, online, get remoteOk() { return remoteOk; } };
+  return { sess, get play() { return play; }, stage, profile, startPlay, updatePlay, endPlay, action, setPending, mark, view, loadAll, put, getPath, online, get remoteOk() { return remoteOk; } };
 })();
 
 async function refreshOnline() { $('onlineCountText').textContent = await TRK.online(); }
@@ -1814,7 +1873,12 @@ function goStep2() {
   if (!profileSel.ageGroup || !profileSel.gender) { showToast('연령대와 성별을 선택해 주세요'); return; }
   let nick = $('nicknameInput').value.trim();
   if (!nick) { nick = randNick(); $('nicknameInput').value = nick; profileSel.nickSrc = 'random'; }
-  TRK.profile({ nick, nickSrc: profileSel.nickSrc, ageGroup: profileSel.ageGroup, gender: profileSel.gender });
+  const pin = $('pinInput').value.trim();
+  if (pin && !/^\d{4}$/.test(pin)) { showToast('PIN은 숫자 4자리로 입력해 주세요 (비워둬도 돼요)'); return; }
+  if (pin) saveKeyOf(nick, pin).then(k => { SAVE.key = k; SAVE.setProfile({ key: k }); TRK.profile({ uk: ukOf(nick), hasPin: true }); });
+  else { SAVE.key = ''; SAVE.setProfile({ key: '' }); }
+  TRK.profile({ nick, nickSrc: profileSel.nickSrc, ageGroup: profileSel.ageGroup, gender: profileSel.gender, uk: ukOf(nick) });
+  SAVE.setProfile({ nick, nickSrc: profileSel.nickSrc, ageGroup: profileSel.ageGroup, gender: profileSel.gender });
   TRK.stage('nickname');
   $('step1').classList.add('hidden'); $('step2').classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1826,6 +1890,106 @@ function backStep1() { $('step2').classList.add('hidden'); $('step1').classList.
    ===================================================================== */
 let L = null, timerId = null, currentSpeed = 0, historyFilter = 'all', autoMode = false, reportShown = false;
 let rightTab = 'live';
+
+
+/* =====================================================================
+   이어하기 (같은 기기: 자동 / 다른 기기: 닉네임 + PIN)
+   - 인생은 '시드 + 선택 기록 + 행동 기록'만 저장하고, 불러올 때 그대로 재생해 정확히 복원
+   ===================================================================== */
+const SAVE_KEY = 'klife3_save', PROF_KEY = 'klife3_profile';
+const SAVE = {
+  key: '', lastRemote: 0,
+  local() { try { return JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { return null; } },
+  profile() { try { return JSON.parse(localStorage.getItem(PROF_KEY)); } catch (e) { return null; } },
+  setProfile(p) { try { localStorage.setItem(PROF_KEY, JSON.stringify(Object.assign(SAVE.profile() || {}, p))); } catch (e) { } },
+  build() {
+    const pl = TRK.play || {};
+    return Object.assign(KL.serialize(L), {
+      nick: TRK.sess.nick, ageGroup: TRK.sess.ageGroup, gender: TRK.sess.gender, auto: autoMode,
+      charName: L.name, charGender: L.gender, tier: L.tier.short, pid: pl.pid || '', playStart: pl.start || Date.now(), playDur: pl.dur || 0,
+      savedAt: Date.now(), done: !L.alive
+    });
+  },
+  write(force) {
+    if (!L) return;
+    const sv = SAVE.build();
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(sv)); } catch (e) { }
+    if (SAVE.key && (force || Date.now() - SAVE.lastRemote > 8000)) { SAVE.lastRemote = Date.now(); TRK.put(`saves/${SAVE.key}`, sv); }
+  }
+};
+async function saveKeyOf(nick, pin) {
+  const text = `${nick.trim()}#${pin}`;
+  try {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 32);
+  } catch (e) { let h = 2166136261; for (const ch of text) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return 'f' + h.toString(16); }
+}
+function renderResumeBox() {
+  const sv = SAVE.local(), box = $('resumeBox');
+  if (!sv || !sv.seed) { box.classList.add('hidden'); return; }
+  const when = new Date(sv.savedAt).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  box.classList.remove('hidden');
+  box.innerHTML = `<div class="flex items-center justify-between gap-3 flex-wrap">
+    <div><div class="text-[11px] font-bold text-emerald-300">👋 다시 오셨네요, ${esc(sv.nick || '플레이어')}님</div>
+      <div class="text-sm font-black text-white mt-0.5">${esc(sv.charName || '')}(${esc(sv.charGender || '')}) · ${esc(sv.tier || '')} · ${sv.done ? '생애 종료' : sv.age + '세 진행 중'}</div>
+      <div class="text-[11px] text-slate-400">마지막 저장 ${when}</div></div>
+    <div class="flex gap-2">
+      <button onclick="resumeLife(SAVE.local())" class="px-4 py-2.5 rounded-xl bg-emerald-500 text-slate-950 text-xs font-black">${sv.done ? '📄 지난 보고서 보기' : '▶ 이어하기'}</button>
+      <button onclick="discardSave()" class="px-3 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold border border-slate-700">🆕 새 인생</button>
+    </div></div>`;
+}
+function discardSave() {
+  if (!confirm('진행 중이던 인생 기록을 지우고 새로 시작할까요?')) return;
+  try { localStorage.removeItem(SAVE_KEY); } catch (e) { }
+  renderResumeBox();
+}
+function toggleRemoteLoad() { $('remoteLoadBox').classList.toggle('hidden'); $('rlNick').value = $('rlNick').value || $('nicknameInput').value; }
+async function loadRemoteSave() {
+  const nick = $('rlNick').value.trim(), pin = $('rlPin').value.trim();
+  if (!nick || !/^\d{4}$/.test(pin)) { $('rlMsg').textContent = '닉네임과 숫자 4자리 PIN을 입력해 주세요.'; return; }
+  if (!DB) { $('rlMsg').textContent = '서버 저장이 꺼져 있어 다른 기기 불러오기를 쓸 수 없어요.'; return; }
+  $('rlMsg').textContent = '불러오는 중…';
+  try {
+    const key = await saveKeyOf(nick, pin);
+    const sv = await TRK.getPath(`saves/${key}`);
+    if (!sv || !sv.seed) { $('rlMsg').textContent = '저장된 인생을 찾지 못했어요. 닉네임·PIN을 확인해 주세요.'; return; }
+    SAVE.key = key; SAVE.setProfile({ key });
+    $('rlMsg').textContent = '✅ 불러왔어요!';
+    resumeLife(sv);
+  } catch (e) { $('rlMsg').textContent = '불러오기 실패: ' + e.message; }
+}
+function applyProfile(p) {
+  if (!p) return;
+  if (p.ageGroup) profileSel.ageGroup = p.ageGroup;
+  if (p.gender) profileSel.gender = p.gender;
+  if (p.persona) profileSel.persona = p.persona;
+  if (p.auto != null) profileSel.auto = !!p.auto;
+  if (p.nick) { $('nicknameInput').value = p.nick; profileSel.nickSrc = p.nickSrc || 'typed'; }
+  if (p.key) SAVE.key = p.key;
+  renderStart();
+}
+function ukOf(nick) { return SAVE.key ? 'k:' + SAVE.key.slice(0, 16) : (nick ? 'n:' + nick.trim() : ''); }
+function resumeLife(sv) {
+  if (!sv || !sv.seed) return;
+  applyProfile({ ageGroup: sv.ageGroup, gender: sv.gender, persona: sv.opts && sv.opts.persona, auto: sv.auto, nick: sv.nick });
+  TRK.profile({ nick: sv.nick || TRK.sess.nick, ageGroup: sv.ageGroup || '', gender: sv.gender || '', persona: (sv.opts || {}).persona || '', auto: !!sv.auto, uk: ukOf(sv.nick) });
+  if (sv.ageGroup && sv.gender) TRK.stage('profile');
+  TRK.stage('nickname');
+  L = KL.restore(sv);
+  autoMode = !!sv.auto; reportShown = false; lastActionAge = -1;
+  const acts = sv.actions || []; if (acts.length && acts[acts.length - 1].age === L.age) lastActionAge = L.age;
+  TRK.startPlay(L, { persona: L.persona, auto: autoMode, econ: L.econ, plan: L.initPlan, pid: sv.pid, start: sv.playStart, dur: sv.playDur, resumed: 1 });
+  TRK.stage('gacha'); if (L.age >= 19) TRK.stage('age19'); if (L.age >= 40) TRK.stage('age40'); if (L.age >= 65) TRK.stage('age65');
+  TRK.updatePlay(L, true);
+  SAVE.setProfile({ nick: sv.nick, ageGroup: sv.ageGroup, gender: sv.gender, persona: L.persona, auto: autoMode });
+  SAVE.write(true);
+  $('startScreen').classList.add('hidden'); $('endReportScreen').classList.add('hidden'); $('gameScreen').classList.remove('hidden');
+  $('headerNicknameBadge').textContent = `👤 ${TRK.sess.nick}`; $('headerNicknameBadge').classList.remove('hidden');
+  if (!L.alive) { finishLife(); return; }
+  switchRightTab('live'); updateUI(); setSpeed(0);
+  if (L.pending) handlePending();
+  showToast(`💾 ${L.age}세부터 이어갑니다 — 속도 버튼(▶)을 누르면 계속 진행돼요`, 3500);
+}
 
 function startGachaLife() {
   const claw = $('clawGroup'); claw.classList.remove('claw-idle'); claw.classList.add('claw-grab');
@@ -1843,6 +2007,8 @@ function startGachaLife() {
     $('headerNicknameBadge').textContent = `👤 ${TRK.sess.nick}`; $('headerNicknameBadge').classList.remove('hidden');
     $('startGachaBtn').disabled = false; claw.classList.add('claw-idle'); claw.classList.remove('claw-grab');
     switchRightTab('live');
+    SAVE.setProfile({ persona: profileSel.persona, auto: autoMode });
+    SAVE.write(true);
     updateUI();
     setSpeed(autoMode ? 60 : 20);
   }, 950);
@@ -1879,6 +2045,7 @@ function afterStep(prevEvents) {
   if (L.age >= 40) TRK.stage('age40');
   if (L.age >= 65) TRK.stage('age65');
   TRK.updatePlay(L, false);
+  SAVE.write(false);
   if (!L.alive) { finishLife(); return; }
   if (L.pending) handlePending();
   updateUI();
@@ -1897,6 +2064,7 @@ function handlePending() {
     showToast(`🤖 ${L.age}세 · ${spec.short}: ${optObj ? optObj.label : id}`, 2200);
     hideDecision();
     TRK.updatePlay(L, true);
+    SAVE.write(false);
     if (!L.alive) { finishLife(); return; }
     if (L.pending) { setTimeout(handlePending, 50); return; }
     updateUI();
@@ -1940,6 +2108,7 @@ function chooseOption(id) {
   const c = L.choices[nBefore]; if (c && decisionShownAt) c.dt = Math.min(600, Math.max(1, Math.round((Date.now() - decisionShownAt) / 1000)));
   hideDecision();
   TRK.updatePlay(L, true);
+  SAVE.write(true);
   if (!L.alive) { finishLife(); return; }
   if (L.pending) { showDecision(L.pending); return; }
   updateUI();
@@ -1967,7 +2136,7 @@ function doAnnualAction(type) {
   if (lastActionAge === L.age) { showToast('올해 자기관리는 이미 했어요. 내년에 다시!'); return; }
   if (type === 'remodel') { if (L.age < 19) { showToast('19세부터 직접 보험을 관리할 수 있어요'); return; } openInsuranceShopModal(); return; }
   lastActionAge = L.age;
-  KL.doAction(L, type); TRK.action(type); updateUI();
+  KL.doAction(L, type); TRK.action(type); SAVE.write(false); updateUI();
 }
 let tempIns = [];
 function openInsuranceShopModal() {
@@ -1996,7 +2165,7 @@ function renderShop() {
 function toggleShop(id) { tempIns = tempIns.includes(id) ? tempIns.filter(x => x !== id) : tempIns.concat(id); renderShop(); }
 function applyInsuranceShop() {
   const list = tempIns.slice(); if (L.ins.packaged) list.push('packaged');
-  KL.remodel(L, list); lastActionAge = L.age; TRK.action('remodel'); TRK.updatePlay(L, true);
+  KL.remodel(L, list); lastActionAge = L.age; TRK.action('remodel'); TRK.updatePlay(L, true); SAVE.write(true);
   closeInsuranceShopModal(); updateUI();
 }
 
@@ -2098,7 +2267,7 @@ function renderFamilyTab() {
 function finishLife() {
   if (reportShown) return; reportShown = true;
   clearInterval(timerId); timerId = null; hideDecision();
-  TRK.endPlay(L); TRK.stage('report');
+  TRK.endPlay(L); TRK.stage('report'); SAVE.write(true);
   renderReport();
   $('gameScreen').classList.add('hidden'); $('endReportScreen').classList.remove('hidden');
   switchEndTab('summary');
@@ -2253,7 +2422,7 @@ function shareGameLink() {
   else navigator.clipboard.writeText(`${text}\n${url}`).then(() => showToast('🔗 링크를 복사했습니다'));
 }
 function restartNewLife() {
-  L = null; $('endReportScreen').classList.add('hidden'); $('gameScreen').classList.add('hidden'); $('startScreen').classList.remove('hidden');
+  L = null; $('resumeBox').classList.add('hidden'); $('endReportScreen').classList.add('hidden'); $('gameScreen').classList.add('hidden'); $('startScreen').classList.remove('hidden');
   $('step1').classList.add('hidden'); $('step2').classList.remove('hidden'); lastActionAge = -1;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -2296,11 +2465,29 @@ function demoOk(x) {
   return (g === 'all' || x.gender === g) && (a === 'all' || x.ageGroup === a);
 }
 // 사용자(방문 세션) 단위로 프로필·선택·관심사를 묶는다
+// 같은 사람(같은 닉네임 또는 닉네임+PIN)의 여러 방문·기기를 한 명으로 묶는다
+function userKey(s) { return s.uk || (s.nick ? 'n:' + s.nick.trim() : 's:' + s.sid); }
 function buildUsers(S, P) {
   const bySid = {};
   P.forEach(p => (bySid[p.sid] = bySid[p.sid] || []).push(p));
-  return S.filter(s => s.nick || s.ageGroup || s.gender).map(s => {
-    const plays = (bySid[s.sid] || []).sort((a, b) => a.start - b.start);
+  const groups = {};
+  S.filter(s => s.nick || s.ageGroup || s.gender).forEach(s => (groups[userKey(s)] = groups[userKey(s)] || []).push(s));
+  return Object.values(groups).map(ss => {
+    ss.sort((a, b) => (a.start || 0) - (b.start || 0));
+    const latest = ss[ss.length - 1];
+    const views = {};
+    ss.forEach(x => Object.entries(x.views || {}).forEach(([k, v]) => views[k] = (views[k] || 0) + v));
+    const s = Object.assign({}, latest, {
+      start: ss[0].start, last: Math.max(...ss.map(x => x.last || 0)), dur: ss.reduce((a, x) => a + (x.dur || 0), 0),
+      stage: Math.max(...ss.map(x => x.stage || 0)), consult: (ss.find(x => x.consult) || {}).consult || '',
+      consultOpen: ss.some(x => x.consultOpen), shared: ss.some(x => x.shared), saved: ss.some(x => x.saved),
+      returning: ss.length > 1 || ss.some(x => x.returning), auto: ss.some(x => x.auto), views,
+      visits: ss.length, devices: [...new Set(ss.map(x => x.dev))].join('+')
+    });
+    // 같은 플레이(이어하기)는 최신 기록 하나만 사용
+    const pmap = {};
+    ss.forEach(x => (bySid[x.sid] || []).forEach(p => { if (!pmap[p.pid] || (p.last || 0) > (pmap[p.pid].last || 0)) pmap[p.pid] = p; }));
+    const plays = Object.values(pmap).sort((a, b) => a.start - b.start);
     const it = {}; Object.keys(KL.TAGS).forEach(k => it[k] = 0);
     const choices = [];
     plays.forEach(p => { (p.choices || []).forEach(c => { choices.push(c); (c.t || '').split(',').filter(Boolean).forEach(t => { if (it[t] != null) it[t]++; }); }); });
@@ -2344,6 +2531,7 @@ function renderAdmin() {
   const totalDur = durs.reduce((a, b) => a + b, 0);
   const nickSess = S.filter(s => s.nick);
   const nickUnique = new Set(nickSess.map(s => s.nick)).size;
+  const personN = new Set(nickSess.map(userKey)).size;
   const nickRandom = nickSess.filter(s => s.nickSrc === 'random').length;
   const bounce = S.filter(s => (s.stage || 0) < STAGE_IDX.gacha).length;
   const started = S.filter(s => (s.stage || 0) >= STAGE_IDX.gacha);
@@ -2355,7 +2543,7 @@ function renderAdmin() {
   const realN = S.filter(s => (s.dur || 0) >= 60 && (s.stage || 0) >= STAGE_IDX.gacha).length;
   const consultN = S.filter(s => s.consult).length;
   const kpis = [
-    ['👤 총 생성 닉네임 (참여자)', `${nickSess.length}명`, 'text-amber-300'],
+    ['👤 총 생성 닉네임 (참여자)', `${personN}명`, 'text-amber-300'],
     ['🎮 실제 참여자 (1분↑·가챠 시작)', `${realN}명`, 'text-emerald-300'],
     ['💼 상담 링크 클릭율', `${total ? pct(consultN / total) : '0%'} (${consultN}명)`, 'text-amber-300'],
     ['🟢 실시간 접속 (45초)', `${online}명`, 'text-emerald-400'],
@@ -2387,7 +2575,7 @@ function renderAdmin() {
     const all = u.choices.length ? u.choices.map(c => `<div class="py-0.5 border-b border-slate-800/60"><b class="text-amber-300">${esc(choiceName(c))}</b> → ${esc(c.l || c.o)} ${c.s === 'a' ? '🤖' : ''} <span class="text-slate-500">[${(c.t || '').split(',').filter(Boolean).map(t => KL.TAGS[t]).join(', ')}]</span></div>`).join('') : '<div class="text-slate-500">아직 선택 기록이 없습니다</div>';
     return `<tr class="border-t border-slate-800 align-top">
       <td class="p-1.5 whitespace-nowrap text-slate-500">${new Date(s.start).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
-      <td class="p-1.5 whitespace-nowrap"><b class="text-cyan-300">${esc(s.nick || '(미입력)')}</b> ${nickTag(u)}</td>
+      <td class="p-1.5 whitespace-nowrap"><b class="text-cyan-300">${esc(s.nick || '(미입력)')}</b> ${nickTag(u)}${s.hasPin || (s.uk || '').startsWith('k:') ? ' <span title="PIN 설정">🔐</span>' : ''}${s.visits > 1 ? `<div class="text-[10px] text-slate-500">방문 ${s.visits}회 · ${esc(s.devices)}</div>` : ''}</td>
       <td class="p-1.5 whitespace-nowrap font-bold text-white">${tdur(s.dur)}</td>
       <td class="p-1.5 whitespace-nowrap"><span class="font-black" style="color:${u.score >= 70 ? '#10b981' : u.score >= 40 ? '#f59e0b' : '#94a3b8'}">${u.score}</span></td>
       <td class="p-1.5 whitespace-nowrap">${s.consult ? '<span class="text-amber-300 font-bold">✅ ' + (s.consult === 'littly' ? '리틀리' : '인스타') + '</span>' : s.consultOpen ? '<span class="text-slate-400">창만 열람</span>' : '-'}</td>
@@ -2616,6 +2804,9 @@ function exportJSON() { if (ADM) download(`klife_backup_${new Date().toISOString
 
 // ---------- 초기화 ----------
 renderStart();
+applyProfile(SAVE.profile());
+renderResumeBox();
+window.addEventListener('pagehide', () => { if (L) SAVE.write(true); });
 setHistoryFilter('all');
 
   </script>
