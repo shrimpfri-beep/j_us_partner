@@ -74,6 +74,7 @@
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1.5">나의 연령대</label>
             <div id="ageGroupChips" class="grid grid-cols-3 sm:grid-cols-6 gap-1.5"></div>
+            <div id="ageFocusBox" class="hidden mt-2 p-2.5 rounded-xl bg-cyan-950/30 border border-cyan-500/30 text-[11px] text-cyan-100 leading-relaxed"></div>
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1.5">나의 성별</label>
@@ -138,7 +139,7 @@
 
         <div class="space-y-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5">나의 인생관 (자동 모드에서 선택 기준이 됩니다)</label>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">나의 인생관 (자동 모드 선택 기준 + 수명·질병·자산에 영향)</label>
             <div id="personaCards" class="grid grid-cols-1 sm:grid-cols-2 gap-1.5"></div>
           </div>
           <div>
@@ -386,6 +387,12 @@
               <div id="repFinanceBreakdown" class="space-y-1.5 text-xs"></div>
             </div>
           </div>
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-rose-500/30 space-y-2.5">
+            <h4 class="text-xs font-extrabold text-rose-300 border-b border-slate-800 pb-2">🧾 평생 소득 → 세금 → 지출 결산 (어디로 돈이 나갔나)</h4>
+            <div id="repSpendBreakdown" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5 text-xs"></div>
+            <div id="repSpendBar" class="pt-1"></div>
+          </div>
+          <div id="repAgeFocus" class="hidden p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/30 space-y-1.5 text-xs"></div>
           <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
             <h4 class="text-xs font-extrabold text-white">📌 내가 한 선택들</h4>
             <div id="repChoicesList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
@@ -419,6 +426,12 @@
               <table class="w-full text-left text-xs"><thead id="mcHead" class="bg-slate-900 text-slate-300 border-b border-slate-800"></thead><tbody id="mcBody" class="divide-y divide-slate-800/80 bg-slate-950/60"></tbody></table>
             </div>
           </div>
+          <div id="bestBox" class="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/50 to-slate-900 border border-emerald-500/40 space-y-2 text-xs"></div>
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-amber-500/30 space-y-2.5">
+            <h4 class="text-xs font-extrabold text-amber-300">🔀 선택 하나만 바꿨다면? (같은 인생, 그 기로에서 다른 길)</h4>
+            <p class="text-[11px] text-slate-400">각 기로에서 고르지 않은 선택지로 바꾸고 나머지는 그대로 다시 살아 본 결과입니다. 숫자는 '내 선택' 대비 차이(상속세 차감 후 남긴 재산)입니다.</p>
+            <div id="altChoiceList" class="space-y-2 text-xs">계산 중…</div>
+          </div>
           <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2.5">
             <h4 class="text-xs font-extrabold text-emerald-300">📝 하지 않은 선택 요약</h4>
             <div id="whatifBullets" class="space-y-2 text-xs"></div>
@@ -431,7 +444,7 @@
 
         <div class="pt-3 border-t border-slate-800/80 text-[11px] text-slate-400 leading-relaxed space-y-1">
           <div>📌 <b>모델 고지:</b> 이 게임의 동일 사건 비교 결과는 설정한 보험료·급여·소득·저축·수익률 가정에 따른 가상 계산이며, 실제 가입 가능 여부·보험금 지급·투자 수익을 보장하지 않습니다. 보험 상품·보험료·인수심사 조건은 모두 가상입니다.</div>
-          <div>📊 <b>값의 성격:</b> [통계 보정] 기대수명은 국가데이터처 2024년 생명표(남 80.8·여 86.6년)에 맞춰 배경사망을 보정 · [통계 참고 추정] 암·뇌심혈관 연령별 발생 패턴(국가암등록통계·사망원인통계), 산정특례·본인부담상한제·재난적의료비·국민연금(2026 개혁안 4.75%/43%) 구조 · [통계·보도 참고] 암 의료비(유방암 1년 초과 평균 약 2,380만·중증 비급여 본인부담률 8.8%), 비급여 면역항암제 연 약 7,140만(2026.4), 요양원 월 약 80만·요양병원 간병비 월 200~267만, 2026 본인부담상한액 90만~843만, 2026 재난적의료비(재산 7억·중위소득 100% 이하, 60~80%·최대 5,000만), 예금 3.2~3.4%·물가 2.9%(2026.9), 연금저축·IRP 세액공제(900만·16.5/13.2%), ISA(연 2,000만·비과세 200/400만), 청년미래적금(월 50만·3년·기여금 6/12%) · [가상 규칙] 가족력 배수, 치료 선택 효과, 보험료, 직업별 소득, 펀드·주식 수익률, 변액보험 사업비, 가족 사건 확률.</div>
+          <div>📊 <b>값의 성격:</b> [통계 보정] 기대수명은 국가데이터처 2024년 생명표(남 80.8·여 86.6년)에 맞춰 배경사망을 보정 · [통계 참고 추정] 암·뇌심혈관 연령별 발생 패턴(국가암등록통계·사망원인통계), 산정특례·본인부담상한제·재난적의료비·국민연금(2026 개혁안 4.75%/43%) 구조 · [통계·보도 참고] 암 의료비(유방암 1년 초과 평균 약 2,380만·중증 비급여 본인부담률 8.8%), 비급여 면역항암제 연 약 7,140만(2026.4), 요양원 월 약 80만·요양병원 간병비 월 200~267만, 2026 본인부담상한액 90만~843만, 2026 재난적의료비(재산 7억·중위소득 100% 이하, 60~80%·최대 5,000만), 예금 3.2~3.4%·물가 2.9%(2026.9), 연금저축·IRP 세액공제(900만·16.5/13.2%), ISA(연 2,000만·비과세 200/400만), 청년미래적금(월 50만·3년·기여금 6/12%), 암종별 5년 상대생존율(국가암등록통계 2019~2023 진단), 연령대별 임금근로자 평균 보수(국가데이터처 2024: 20대 월 271만~50대 445만), 근로자 평균 연봉 4,500만·중위 3,417만(국세청 2024), 자영업 평균 사업소득 연 1,938만, 소득세 기본세율 6~45%·근로소득공제·세액공제, 2026 4대보험 요율(국민연금 9.5%·건강 7.19%·고용 0.9%), 상속·증여세(일괄공제 5억·10~50%·신고세액공제 3%), 가계동향 월 소비지출 293만(2026 2분기), 사교육비(참여학생 월 60.4만·참여율 75.7%, 2025), 결혼비용 4,360~5,810만(신혼집 제외), 부모급여·아동수당·근로장려금 · [가상 규칙] 인생관·플레이어 연령대 효과, 질병·사고 연간 확률, 주거비·양육비 수준, 기업 규모 임금 배수, 가족력 배수, 치료 선택 효과, 보험료, 직업별 소득, 펀드·주식 수익률, 변액보험 사업비, 가족 사건 확률.</div>
         </div>
       </div>
 
@@ -562,7 +575,7 @@ const KL = (function () {
 
   // [보정값] 생명표 기대수명(2024: 남 80.8·여 86.6년)에 맞추도록 헤드리스 시뮬레이션으로 보정한 배경사망 계수
   // 암·뇌심혈관 사망을 별도 사건으로 추첨하므로 배경사망은 축소 적용(사망 중복 반영 방지)
-  let BG_FACTOR = { '남성': 0.49, '여성': 0.31 };
+  let BG_FACTOR = { '남성': 0.68, '여성': 0.58 }; // v4: 질병·사고 확장 + 인생관·연령대 효과 반영 후 재보정 (8,000명 평균 남 80.8 · 여 86.8세)
 
   // ---------- 출생 가계 (가상 설정 — 가계금융복지조사·한국의료패널 원자료 분석 후 교체 권장) ----------
   const TIERS = [
@@ -605,12 +618,32 @@ const KL = (function () {
   // ---------- 인생관 (자동 모드 선택 가중치) ----------
   const PERSONAS = {
     stable: { label: '🛡️ 안정 추구형', motto: '잃지 않는 것이 먼저', w: { safety: 3, health: 2, family: 1.5, wealth: 1, education: 1, career: 0.8, experience: 0.5 }, actions: ['checkup', 'exercise'] },
-    growth: { label: '📈 성장·부자형', motto: '기회는 잡아야 내 것', w: { wealth: 3, career: 2, education: 1.5, experience: 1, health: 0.8, family: 0.8, safety: 0.6 }, actions: ['study'] },
+    growth: { label: '📈 성장·부자형', motto: '기회는 잡아야 내 것', w: { wealth: 3, career: 2, education: 1.5, experience: 1, health: 0.8, family: 0.8, safety: 0.6 }, actions: ['study', 'exercise'] },
     family: { label: '👨‍👩‍👧 가족 중심형', motto: '함께 사는 인생', w: { family: 3, safety: 2, health: 1.5, education: 1.5, wealth: 1, career: 1, experience: 0.7 }, actions: ['checkup', 'study'] },
-    free: { label: '🌏 자유·경험형', motto: '지금 이 순간을 산다', w: { experience: 3, wealth: 1.2, career: 1.2, health: 1, education: 1, family: 0.8, safety: 0.5 }, actions: ['exercise'] },
+    free: { label: '🌏 자유·경험형', motto: '지금 이 순간을 산다', w: { experience: 2.4, wealth: 1.6, career: 1.4, health: 1, education: 1, family: 0.9, safety: 0.6 }, actions: ['exercise'] },
     health: { label: '💪 건강 우선형', motto: '몸이 곧 자산', w: { health: 3, safety: 2, family: 1.2, experience: 1.2, education: 1, wealth: 0.8, career: 0.8 }, actions: ['exercise', 'checkup'] }
   };
   const TAGS = { health: '건강', wealth: '재산 증식', education: '교육·학구열', career: '직업 전환·커리어', family: '가족', safety: '보장·안전', experience: '경험·자유' };
+  // 인생관별 생애 효과 (게임 가정값) — mort: 배경사망 배수, dz: 질병 '발견(진단)' 배수, acc: 사고 배수, mpc: 소비성향 배수, ret: 여유자금 수익률 가감
+  const PMOD = {
+    stable: { mort: 1.0, dz: 1.0, acc: 0.85, mpc: 1.0, ret: -0.018, finRec: false, effect: '최종 자산 증식 낮음 (예금 위주로 묶어 둠 · 여유자금 수익률 최대 −1.8%p, 0% 밑으로는 내려가지 않음) · 사고 위험 ↓' },
+    growth: { mort: 1.0, dz: 1.0, acc: 1.0, mpc: 0.95, ret: 0.004, bh: 1.1, finRec: true, effect: '재테크 추천 (절세계좌·펀드를 적극 개설) · 업무 스트레스로 뇌심혈관 위험 소폭 ↑' },
+    family: { mort: 0.9, dz: 1.0, acc: 0.9, mpc: 1.0, ret: 0, finRec: false, effect: '기대수명 증가 (가족 지지·규칙적 생활 가정) · 가족 지출 ↑' },
+    free: { mort: 1.12, dz: 1.05, acc: 1.4, mpc: 0.95, ret: 0.015, finRec: false, effect: '기대수명 감소 · 레저·교통 사고 ↑ · 소비 ↑ → 자산 증식 중간' },
+    health: { mort: 0.85, dz: 1.3, acc: 1.1, mpc: 1.0, ret: 0, finRec: true, early: true, effect: '기대수명 증가 · 검진이 잦아 질병 발견(진단)↑·조기발견↑ · 재테크 추천' }
+  };
+  Object.keys(PERSONAS).forEach(k => { PERSONAS[k].effect = PMOD[k].effect; });
+  const pmod = L => PMOD[L.persona] || PMOD.stable;
+  // 플레이어(실제 나) 연령대별 강조 사건 — 게임 속 인생에서 해당 연령대가 주목할 위험이 더 자주 등장
+  const AGEG = {
+    '10대': { acc: 2.0, dz: 1.0, mpc: 0, focus: '사건·사고 (교통사고·운동 중 부상)', info: '10~20대는 질병보다 사고가 큰 위험입니다. 상해 수술비·실손·일상배상책임이 첫 보험의 핵심입니다.', tags: ['safety', 'experience'] },
+    '20대': { acc: 1.3, dz: 1.0, mpc: 0.03, focus: '자산 증식 갈등 · 학자금 대출 · 충동 투자', info: '사회초년생의 자산은 수익률보다 "잃지 않는 선택"과 청년미래적금·ISA 같은 제도 혜택에서 갈립니다.', tags: ['wealth', 'career'] },
+    '30대': { acc: 1.0, dz: 1.05, mpc: 0.06, focus: '취업·이직 · 결혼 비용 · 소비 증가', info: '결혼·출산·주거로 고정지출이 한꺼번에 커지는 시기입니다. 소비 습관과 맞벌이 여부가 이후 30년을 좌우합니다.', tags: ['family', 'career'] },
+    '40대': { acc: 1.0, dz: 1.35, mpc: 0, focus: '질병 노출 · 자녀 교육비 · 노후 점검', info: '암·뇌심혈관·디스크 등 질병 노출이 빠르게 늘어납니다. 정밀검진과 진단비, 연금 점검이 중요한 시기입니다.', tags: ['health', 'education'] },
+    '50대': { acc: 1.0, dz: 1.5, mpc: 0, focus: '중증질환 · 퇴직금 · 노후자금', info: '중증질환 발생률이 가장 가파르게 오르고, 퇴직금 수령 방식(연금 vs 일시금)이 세금을 바꿉니다.', tags: ['health', 'safety'] },
+    '60대 이상': { acc: 1.0, dz: 1.6, mpc: 0, focus: '노인성 질환 · 간병 · 상속세', info: '백내장·관절·폐렴·치매 등 노인성 질환과 간병비, 그리고 남길 재산의 상속세를 함께 준비해야 합니다.', tags: ['health', 'family'] }
+  };
+  const ageg = L => AGEG[L.playerAge] || { acc: 1, dz: 1, mpc: 0 };
 
   const STRATEGIES = [
     { id: 'actual', label: '내가 실제로 한 선택', short: '실제 선택' },
@@ -618,7 +651,11 @@ const KL = (function () {
     { id: 'standard', label: '가성비 표준보장(실손+암+뇌심) + 분산투자', short: '표준보장+분산', ins: ['silson', 'cancer', 'brainHeart'], invest: 'balanced' },
     { id: 'stableFin', label: '표준보장 + 안정형 재테크(청년적금·연금저축·ISA)', short: '표준보장+안정재테크', ins: ['silson', 'cancer', 'brainHeart'], invest: 'stable', acc: { youth: 50, pension: 25, isa: 300 } },
     { id: 'full', label: '풀보장(+간병·정기사망) + 예적금', short: '풀보장+예적금', ins: ['silson', 'cancer', 'brainHeart', 'care', 'termLife'], invest: 'cash' },
-    { id: 'aggressive', label: '무보험 + 주식·코인 공격투자', short: '무보험+공격투자', ins: [], invest: 'aggressive' }
+    { id: 'aggressive', label: '무보험 + 주식·코인 공격투자', short: '무보험+공격투자', ins: [], invest: 'aggressive' },
+    {
+      id: 'best', label: '모든 대비를 다 했을 때 (표준보장+간병 · 안정재테크 · 연금·퇴직연금 · 검진·운동 습관)', short: '모든 대비', ins: ['silson', 'cancer', 'brainHeart', 'care'], invest: 'stable', acc: { youth: 50, pension: 40, isa: 300 }, habits: true,
+      force: { teen16: 'study', invest25: 'save', tempt27: 'refuse', pension26: 'dcTdf', checkup40: 'precise', pension45: 'boost', retire58: 'irpAnnuity', wed32: 'small', kid_edu: 'avg', late72: 'careReady' }
+    }
   ];
   // 상품별 실질수익률(물가 차감) 가정
   // 근거: 2026.9 기준금리 3.0%, 시중은행 1년 정기예금 3.2~3.4%, 2026.9 소비자물가 +2.9% → 예금 실질 ≈ +0.4%
@@ -650,11 +687,41 @@ const KL = (function () {
     let p = a < 20 ? 0.0002 : a < 30 ? 0.0006 : a < 40 ? 0.0015 : a < 50 ? 0.003 : a < 60 ? 0.0055 : a < 70 ? 0.010 : a < 80 ? 0.015 : 0.017;
     if (g === '여성') p *= (a >= 30 && a < 50) ? 1.4 : (a >= 60 ? 0.72 : 1);
     else p *= a >= 60 ? 1.2 : (a >= 30 && a < 50 ? 0.75 : 1);
-    return p;
+    return p * 0.9; // 검진·발견 배수(인생관·연령대) 평균을 감안해 기본값 10% 하향 보정
   }
   function bhInc(a, g) {
     const p = a < 30 ? 0.0001 : a < 40 ? 0.0004 : a < 50 ? 0.0016 : a < 60 ? 0.0038 : a < 70 ? 0.0075 : a < 80 ? 0.013 : 0.018;
     return p * 0.7 * (g === '남성' ? 1.25 : 0.8);
+  }
+  // 암종별 발생 비중(국가암등록통계 2022 성별 순위 단순화)과 5년 상대생존율(2019~2023 진단자, 국가암등록통계 2023)
+  const CANCER_MIX = {
+    '남성': [['lung', 0.15], ['stomach', 0.13], ['prostate', 0.13], ['colon', 0.12], ['liver', 0.09], ['thyroid', 0.08], ['pancreas', 0.035], ['other', 0.265]],
+    '여성': [['breast', 0.22], ['thyroid', 0.19], ['colon', 0.09], ['lung', 0.09], ['stomach', 0.07], ['pancreas', 0.035], ['liver', 0.035], ['other', 0.27]]
+  };
+  // gross/nonCov: 1년 치료비 가정(만 원) · drug: 급여 기준 밖 신약을 권고받을 확률(가정) · minor: 유사암(진단비 20% 지급)
+  const CANCER_T = {
+    thyroid: { label: '갑상선암', s: 0.999, gross: 700, nonCov: 120, drug: 0, minor: true },
+    prostate: { label: '전립선암', s: 0.962, gross: 1600, nonCov: 300, drug: 0.1 },
+    breast: { label: '유방암', s: 0.943, gross: 2400, nonCov: 350, drug: 0.2 },
+    stomach: { label: '위암', s: 0.784, gross: 2000, nonCov: 280, drug: 0.15 },
+    colon: { label: '대장암', s: 0.746, gross: 2400, nonCov: 320, drug: 0.25 },
+    lung: { label: '폐암', s: 0.406, gross: 3400, nonCov: 420, drug: 0.45 },
+    liver: { label: '간암', s: 0.394, gross: 3400, nonCov: 420, drug: 0.35 },
+    pancreas: { label: '췌장암', s: 0.17, gross: 3800, nonCov: 500, drug: 0.3 },
+    other: { label: '기타 암(혈액암 등)', s: 0.65, gross: 2400, nonCov: 320, drug: 0.25 }
+  };
+  function pickCancer(L, u) {
+    const a = L.age, mix = CANCER_MIX[L.gender].map(([k, w]) => {
+      let m = 1;
+      if (a < 40) m = { thyroid: 2.2, breast: 1.5, prostate: 0.05, lung: 0.4, pancreas: 0.4, liver: 0.6 }[k] || 1;
+      else if (a >= 70) m = { thyroid: 0.4, breast: 0.7, prostate: 1.5, lung: 1.35, pancreas: 1.5 }[k] || 1;
+      if (L.dna.id === 'cancer_fam' && ['stomach', 'colon', 'breast'].includes(k)) m *= 1.5;
+      if (L.dna.id === 'meta_fam' && ['liver', 'pancreas'].includes(k)) m *= 1.3;
+      return [k, w * m];
+    });
+    const tot = mix.reduce((s, x) => s + x[1], 0); let acc = 0;
+    for (const [k, w] of mix) { acc += w / tot; if (u < acc) return k; }
+    return 'other';
   }
   // 배경사망: 곰페르츠 근사 (생명표 연령 패턴 근사, 보정계수 BG_FACTOR)
   function qx(a, g) {
@@ -673,6 +740,9 @@ const KL = (function () {
     // 추가 난수열 (기존 시드의 사건 순서를 바꾸지 않도록 별도 생성)
     const xr = mulberry32((seed ^ 0xC0FFEE) >>> 0);
     const xs = []; for (let a = 0; a <= MAX_AGE; a++) xs.push([xr(), xr(), xr(), xr(), xr(), xr()]);
+    // v4 확장 사건(질병·사고·연령대 사건)용 난수열
+    const yr = mulberry32((seed ^ 0xBADA55) >>> 0);
+    const ys = []; for (let a = 0; a <= MAX_AGE; a++) { const row = []; for (let i = 0; i < 20; i++) row.push(yr()); ys.push(row); }
     const cr = mulberry32((seed ^ 0x9E3779B9) >>> 0);
     const r = []; for (let i = 0; i < 16; i++) r.push(cr());
 
@@ -691,10 +761,11 @@ const KL = (function () {
     const tier = TIERS[tierIdx];
 
     const L = {
-      v: 3, seed, shocks, xs, gender, name: names[Math.floor(r[1] * names.length)],
+      v: 4, seed, shocks, xs, ys, gender, name: names[Math.floor(r[1] * names.length)],
       tier, dna, siblings,
       baseLifeExp: gender === '남성' ? 80.8 : 86.6,
-      persona: o.persona || 'stable', econ: o.econ || 'fixed', initPlan: o.initPlan || 'auto',
+      persona: o.persona || 'stable', econ: o.econ || 'fixed', initPlan: o.initPlan || 'auto', playerAge: o.playerAge || '',
+      firm: 1, firmLabel: '', sLoan: 0, car: null, retPlan: 'db', retChoice: '', kidEdu: 1, checkPlan: '', dz: {}, dialysis: false, cancerType: null, marriedAge: 0,
       age: 0, alive: true, cause: '', deathAge: null,
       cash: tier.seed, house: null,
       career: 'child', jobLabel: '영유아 (부모 부양)', jobClass: 1, startAge: 99, wage: 0, level: 1, incomeMult: 1, eduBoost: 1, creatorBoost: 1,
@@ -719,6 +790,8 @@ const KL = (function () {
         familyOut: 0, kidsCost: 0, investReturn: 0, interest: 0, crisis: 0, downgrade: 0, voluntaryStd: 0, bankrupt: 0, lapses: 0,
         surrenderLoss: 0, termPayout: 0, gift: 0, houseGain: 0, peakNetWorth: tier.seed,
         finContrib: 0, finTaxCredit: 0, finTaxSaved: 0, finGov: 0, finFee: 0, finTax: 0, finSurrender: 0, finPayout: 0, finReturn: 0, giftRecv: 0, giftTax: 0,
+        incomeTax: 0, social: 0, rent: 0, propTax: 0, living: 0, kidsBase: 0, kidsEdu: 0, childBenefit: 0, wedding: 0, loanRepay: 0, parentsAllow: 0, carCost: 0,
+        welfare: 0, inheritGross: 0, inheritTax: 0, estateTax: 0, heirNet: 0, retireTax: 0, healthRetiree: 0, autoIns: 0, selfLoss: 0, workYears: 0,
         events: []
       },
       history: [], choices: [], actions: [], interests: { health: 0, wealth: 0, education: 0, career: 0, family: 0, safety: 0, experience: 0 },
@@ -807,6 +880,59 @@ const KL = (function () {
   // 2026 기준중위소득 근사 (연, 만 원): 1인 3,080 · 2인 5,050 · 3인 6,460 · 4인 이상 7,790
   function medianIncome(L) { const n = 1 + (L.spouse.married ? 1 : 0) + L.kids.filter(k => { const ka = kidAge(L, k); return ka >= 0 && ka <= 21; }).length; return [0, 3080, 5050, 6460, 7790][Math.min(4, n)]; }
 
+  // ---------- 세금 (2026 세법 단순화) ----------
+  // 근로소득공제 → 인적공제(1인 150만)·사회보험료·카드 등 소득공제 → 기본세율 6~45% → 근로소득세액공제·자녀세액공제·표준세액공제 → 지방소득세 10%
+  function earnDeduct(g) { return g <= 500 ? g * 0.7 : g <= 1500 ? 350 + (g - 500) * 0.4 : g <= 4500 ? 750 + (g - 1500) * 0.15 : g <= 10000 ? 1200 + (g - 4500) * 0.05 : Math.min(2000, 1475 + (g - 10000) * 0.02); }
+  function baseTax(t) {
+    t = Math.max(0, t);
+    const B = [[1400, 0.06, 0], [5000, 0.15, 126], [8800, 0.24, 576], [15000, 0.35, 1544], [30000, 0.38, 1994], [50000, 0.40, 2594], [100000, 0.42, 3594], [Infinity, 0.45, 6594]];
+    for (const [lim, r, d] of B) if (t <= lim) return t * r - d;
+    return 0;
+  }
+  function incomeTax(gross, o) {
+    if (gross <= 0) return 0;
+    o = o || {};
+    const inc = o.wage ? gross - earnDeduct(gross) : gross;
+    const taxable = inc - 150 * (o.deps || 1) - (o.social || 0) - (o.wage ? Math.min(300, gross * 0.05) : 0);
+    let t = baseTax(taxable);
+    if (o.wage) {
+      const cr = t <= 130 ? t * 0.55 : 71.5 + (t - 130) * 0.3;
+      const lim = gross <= 3300 ? 74 : gross <= 7000 ? Math.max(66, 74 - (gross - 3300) * 0.008) : gross <= 12000 ? Math.max(50, 66 - (gross - 7000) * 0.5) : Math.max(20, 50 - (gross - 12000) * 0.5);
+      t -= Math.min(cr, lim);
+    }
+    const k = o.kids || 0; t -= k >= 2 ? 55 + (k - 2) * 40 : k * 25;
+    t -= o.wage ? 13 : 7;
+    return Math.max(0, R(t * 1.1));
+  }
+  // 상속세·증여세 공통 세율 (1억 10% · 5억 20% · 10억 30% · 30억 40% · 초과 50%), 신고세액공제 3%
+  function transferTax(t) { t = Math.max(0, t); return R((t <= 10000 ? t * 0.1 : t <= 50000 ? t * 0.2 - 1000 : t <= 100000 ? t * 0.3 - 6000 : t <= 300000 ? t * 0.4 - 16000 : t * 0.5 - 46000) * 0.97); }
+  // 상속세: 일괄공제 5억 + 배우자 공제(최소 5억) + 금융재산공제(20%, 최대 2억) — 현행법 기준(개편안 미반영)
+  function inheritTax(est, o) {
+    o = o || {};
+    const finDed = Math.min(20000, Math.max(0, est) * (o.finShare != null ? o.finShare : 0.3) * 0.2);
+    return transferTax(est - 50000 - (o.spouse ? 50000 : 0) - finDed);
+  }
+  // 퇴직소득세: 근속연수공제·환산급여공제 후 실효세율을 적립금 규모별 2.5~8%로 근사 · IRP 연금수령 시 40% 감면(10년 초과 가정)
+  function retTaxRate(f) { return f <= 10000 ? 0.025 : f <= 20000 ? 0.04 : f <= 30000 ? 0.06 : 0.08; }
+  function payRetirement(L, a) {
+    const f = R(L.retireFund); L.retireFund = 0;
+    if (f <= 1) return;
+    const rate = retTaxRate(f), lg = L.ledger;
+    if (L.retChoice === 'irpAnnuity') {
+      const tax = R(f * rate * 0.6); lg.retireTax += tax;
+      L.retirePay = R((f - tax) / 20); L.retirePayUntil = a + 19;
+      log(L, a, 'finance', `🏁 은퇴: 퇴직금 ${fm(f)}을 IRP 연금으로 — 연 ${fm(L.retirePay)} × 20년 (퇴직소득세 40% 감면, 세금 ${fm(tax)})`, true);
+    } else {
+      const tax = R(f * rate); lg.retireTax += tax;
+      let net = f - tax; lg.retireRecv += net;
+      if (L.retChoice === 'payLoan' && L.house && L.house.loan > 0) { const p = Math.min(L.house.loan, net); L.house.loan -= p; net -= p; log(L, a, 'finance', `🏠 퇴직금으로 주택담보대출 ${fm(p)} 상환`); }
+      L.cash += net;
+      log(L, a, 'finance', `🏁 은퇴: 퇴직금 ${fm(f)} 일시금 수령 (퇴직소득세 ${fm(tax)})`, true);
+    }
+  }
+  // 부모 상속재산 총액 (소득분위별 가정 — 가계금융복지조사 60대 이상 가구 순자산 분포를 단순화)
+  const ESTATE = [2000, 10000, 30000, 65000, 180000];
+
   // ---------- 1년 진행 ----------
   function step(L) {
     if (!L.alive || L.pending) return false;
@@ -817,17 +943,29 @@ const KL = (function () {
     if (a === 14) L.jobLabel = '중·고등학생';
     if (a === 19 && L.strategy) enforce(L);
     if (L.strategy && L.strategy.acc && a > 19) enforce(L);
+    if (L.checkPlan && a >= 40 && a % 2 === 0) {
+      if (L.checkPlan === 'precise') { L.cash -= 60; L.ledger.living += 60; L.lastCheckup = a; }
+      else if (L.ys[a][Y.early] < 0.5) L.lastCheckup = a;
+    }
     yearFinance(L, u);
     L.queue = buildQueue(L, u);
     runQueue(L);
     return true;
   }
 
+  // 실질 임금상승률 (가정) — 연령별 평균 보수(국가데이터처 2024 임금근로일자리: 20대 월 271만·30대 397만·40대 469만·50대 445만·60대 293만)에 맞춘 곡선
   function growth(c, a) {
-    if (c === 'office') return a < 40 ? 1.035 : a < 52 ? 1.012 : a < 56 ? 1 : 0.97;
-    if (c === 'tech') return a < 35 ? 1.04 : a < 50 ? 1.01 : 0.99;
-    if (c === 'civil') return a < 55 ? 1.03 : 1.0;
+    if (c === 'office') return a < 40 ? 1.033 : a < 50 ? 1.008 : a < 55 ? 1 : 0.97; // 임금피크
+    if (c === 'tech') return a < 35 ? 1.03 : a < 50 ? 1.005 : 0.99;
+    if (c === 'civil') return a < 55 ? 1.019 : 1.0;
     return 1.01;
+  }
+  // 첫 직장 규모 (기업 규모별 임금 격차: 대기업 평균은 중소기업의 약 2배 — 게임은 1.35 / 1.05 / 0.85 배수로 단순화)
+  function setFirm(L) {
+    if (L.career === 'civil' || L.career === 'creator') { L.firm = 1; L.firmLabel = L.career === 'civil' ? '공공기관' : '1인 창업'; return; }
+    const u = L.ys[19][Y.firm];
+    const f = u < 0.15 ? [1.35, '대기업'] : u < 0.40 ? [1.05, '중견기업'] : [0.85, '중소기업'];
+    L.firm = f[0]; L.firmLabel = f[1]; L.wage *= f[0];
   }
 
   function wageFor(L, a, u) {
@@ -835,19 +973,24 @@ const KL = (function () {
     if (L.retired) return (L.bridgeUntil && a <= L.bridgeUntil) ? 1800 : 0;
     if (a > L.workUntil) {
       L.retired = true;
-      L.retirePay = R(L.retireFund / 20); L.retirePayUntil = a + 19; L.retireFund = 0;
+      payRetirement(L, a);
       L.jobLabel = L.bridgeUntil ? '재취업(브릿지 잡)' : '은퇴';
-      log(L, a, 'finance', `🏁 주된 일자리에서 은퇴. 퇴직연금 연 ${fm(L.retirePay)}씩 20년 수령 (가상)`, true);
       return (L.bridgeUntil && a <= L.bridgeUntil) ? 1800 : 0;
     }
     if (a < L.startAge) return L.career === 'civil' ? 0 : 500; // 학생 아르바이트
-    if (a === L.startAge) log(L, a, 'finance', `💼 첫 소득 시작: ${L.jobLabel} (연 ${fm(L.wage * L.incomeMult)})`, true);
+    if (a === L.startAge) log(L, a, 'finance', `💼 첫 소득 시작: ${L.jobLabel}${L.firmLabel ? '(' + L.firmLabel + ')' : ''} (연 ${fm(L.wage * L.incomeMult)})`, true);
     if (a > L.startAge) L.wage *= growth(L.career, a);
     let w = L.wage;
     if (L.career === 'creator' || L.career === 'self') {
       const z = gauss(u[S.cr1], u[S.cr2]);
-      L.level = clamp(L.level * Math.exp(0.005 + 0.25 * z), 0.25, 6);
+      L.level = clamp(L.level * Math.exp(-0.03 + 0.25 * z), 0.25, 6);
       w = L.wage * L.level;
+      // 수입이 장기간 바닥이면 폐업 후 재취업 (자영업 폐업률이 높은 현실 반영, 가정)
+      if (L.level < 0.4 && a < 55) {
+        Object.assign(L, { career: 'office', jobLabel: '폐업 후 재취업 (중소기업)', wage: 2800, level: 1, jobClass: 1, workUntil: 60, firm: 0.85, firmLabel: '중소기업' });
+        log(L, a, 'finance', '🔄 수입 악화로 폐업·활동 중단 → 중소기업에 재취업 (연 2,800만)', true); L.sanity -= 6;
+        w = 2800;
+      }
     }
     w *= L.incomeMult;
     L.cuts.forEach(c => { if (a <= c.until) w *= c.mult; });
@@ -871,30 +1014,61 @@ const KL = (function () {
     const earned = wageFor(L, a, u);
     let spouseEarned = 0;
     if (L.spouse.married && L.spouse.dual) {
-      if (a < 60) { L.spouse.wage *= a < 55 ? 1.025 : 0.98; spouseEarned = R(L.spouse.wage); }
+      if (a < 60) { L.spouse.wage *= a < 50 ? 1.015 : a < 55 ? 1 : 0.98; spouseEarned = R(L.spouse.wage); }
     }
     const hh = earned + spouseEarned;
     L.lastEarned = earned; L.lastHousehold = hh;
     lg.earned += earned; lg.spouseEarned += spouseEarned;
+    if (earned > 0 && a >= L.startAge && !L.retired) lg.workYears++;
+    const pm = pmod(L), ag = ageg(L), z = marketZ(L, u);
+    const kidsLive = L.kids.filter(k => { const ka = kidAge(L, k); return ka >= 0 && ka <= 22; });
 
     let inflow = hh, outflow = 0;
-    // 자녀 양육비 (가정값: 0~21세 연 1,000만 + 유학 지원)
+    // ── 세금·4대보험 (2026 요율: 국민연금 9.5%(근로자 4.75%) · 건강 7.19%(근로자 3.595%) · 장기요양 근로자 0.4656% · 고용 0.9%)
+    //    자영업·창업자는 국민연금 9.5% 전액 + 지역 건강보험(약 8.1%) 부담
+    const selfEmp = L.career === 'creator' || L.career === 'self';
+    let npc = 0, social = 0, itax = 0;
+    if (earned > 0 && !L.retired) {
+      const base = Math.min(earned, 7644);
+      npc = R(base * (selfEmp ? 0.095 : 0.0475));
+      social = R(earned * (selfEmp ? 0.0812 : 0.0496));
+      outflow += npc; lg.npPaid += npc; L.np.years++; L.np.sum += base;
+      if (['office', 'tech', 'civil'].includes(L.career)) L.retireFund += earned / 12;
+    } else if (earned > 0) social = R(earned * 0.0496); // 은퇴 후 재취업
+    const deps = 1 + (L.spouse.married && !L.spouse.dual ? 1 : 0) + kidsLive.length;
+    if (earned > 0) itax = incomeTax(earned, { wage: !selfEmp || L.retired, deps, kids: kidsLive.filter(k => kidAge(L, k) >= 8).length, social: npc + social });
+    if (spouseEarned > 0) {
+      const sS = R(spouseEarned * 0.0496 + Math.min(spouseEarned, 7644) * 0.0475);
+      itax += incomeTax(spouseEarned, { wage: true, deps: 1, kids: 0, social: sS }); social += sS;
+    }
+    outflow += itax + social; lg.incomeTax += itax; lg.social += social;
+    // 퇴직연금 적립금 운용 (DB: 임금상승률 연동 · DC: TDF 또는 원리금보장)
+    if (L.retireFund > 0) {
+      const g = L.retPlan === 'dcTdf' ? 1 + mixRet(INVEST.balanced.w, z) - 0.004 : L.retPlan === 'dcSafe' ? 1.004 : (L.retired ? 1 : Math.max(0.97, growth(L.career, a)));
+      L.retireFund *= g;
+    }
+    // 자녀 양육비: 연령별 기본 양육비(가정) + 사교육비(2025 사교육비조사: 참여학생 월 60.4만 → 학교급별 차등) + 대학 등록금(연 700만 가정)
+    //  − 부모급여(0세 월 100만·1세 월 50만) − 아동수당(만 8세까지 월 10만)
+    //  소득이 낮은 가구는 양육·교육비를 줄인다고 가정 (가구소득 9,000만 기준 0.4~1.25배)
+    const kf = clamp((hh || L.lastHousehold) / 9000, 0.4, 1.25);
     L.kids.forEach(k => {
       const ka = kidAge(L, k);
-      if (ka >= 0 && ka <= 21) { const c = 1000 + (k.abroadUntil && L.age <= k.abroadUntil ? 2500 : 0) + (k.chronicCare && ka <= 21 ? 300 : 0); outflow += c; lg.kidsCost += c; }
+      if (ka < 0 || ka > 22) return;
+      const baseC = R((ka <= 5 ? 1000 : ka <= 11 ? 1100 : ka <= 18 ? 1300 : 600) * kf);
+      const tuition = ka >= 19 ? (hh < 9000 ? 250 : 700) : 0; // 국가장학금(소득연계) 반영
+      const edu = ka >= 7 && ka <= 18 ? R((ka <= 12 ? 600 : ka <= 15 ? 760 : 920) * L.kidEdu * kf) : 0;
+      const abroad = k.abroadUntil && L.age <= k.abroadUntil ? 2500 : 0;
+      const care = k.chronicCare ? 300 : 0;
+      const ben = ka === 0 ? 1320 : ka === 1 ? 720 : ka <= 8 ? 120 : 0;
+      const c = baseC + tuition + abroad + care;
+      outflow += c + edu; inflow += ben;
+      lg.kidsBase += c; lg.kidsEdu += edu; lg.kidsCost += c + edu; lg.childBenefit += ben;
     });
     // 보험료
     const prem = R(monthlyPremium(L) * 12);
     L.lastPremium = prem;
     if (a >= 19) { outflow += prem; lg.premium += prem; } else lg.premiumParents += prem;
     if (a >= 19 && hh > 0 && prem / hh > 0.15) { L.sanity -= 3; log(L, a, 'finance', `⚠️ 보험료가 가구소득의 ${R(prem / hh * 100)}% — 보험푸어 경고 구간 (게임 규칙: 15% 초과)`); }
-    // 국민연금 (2026 개혁: 보험료율 9.5% 중 근로자 4.75%, 소득대체율 43% — 산식은 게임용 단순화)
-    if (earned > 0 && !L.retired) {
-      const base = Math.min(earned, 7644);
-      const npc = R(base * 0.0475); outflow += npc; lg.npPaid += npc; L.np.years++; L.np.sum += base;
-      if (['office', 'tech', 'civil'].includes(L.career)) L.retireFund += earned / 12;
-    }
-    L.retireFund *= 1.025;
     // 연금 수령
     if (!L.np.started && a >= L.np.start && (L.retired || a >= 65)) {
       L.np.started = true;
@@ -908,10 +1082,25 @@ const KL = (function () {
     if (L.spouse.married && L.spouse.dual && a >= 65) inflow += 700;
     if (L.retirePay > 0 && a <= L.retirePayUntil) { inflow += L.retirePay; lg.retireRecv += L.retirePay; }
     if (L.house && L.house.reverse) { inflow += 1700; lg.homePension += 1700; }
-    if (a >= 65 && netWorth(L) < 35000 && L.np.benefit < 1500) { inflow += 410; lg.basicPension += 410; }
-    // 자녀 용돈 (자녀 독립 성공 시, 가상)
+    if (a >= 65 && netWorth(L) < 35000 && L.np.benefit < 1500) { const bp = L.spouse.married ? 656 : 410; inflow += bp; lg.basicPension += bp; } // 기초연금 (부부 20% 감액)
+    // 근로·자녀장려금 (저소득 가구, 2026 기준 단순화: 단독 2,200만·홑벌이 3,200만·맞벌이 4,400만 미만 / 자녀장려금 7,000만 미만 1인 최대 100만)
+    if (hh > 0 && !L.retired) {
+      const lim = !L.spouse.married ? [2200, 165] : L.spouse.dual ? [4400, 330] : [3200, 285];
+      const kidsU18 = kidsLive.filter(k => kidAge(L, k) < 18).length;
+      const eitc = hh < lim[0] ? R(lim[1] * Math.min(1, (lim[0] - hh) / (lim[0] * 0.5))) : 0;
+      const ctc = hh < 7000 ? R(kidsU18 * 100 * Math.min(1, (7000 - hh) / 3500)) : 0;
+      if (eitc + ctc > 0) { inflow += eitc + ctc; lg.welfare += eitc + ctc; }
+    }
     L.kids.forEach(k => { if (k.status === 'success' && a >= 68) inflow += 240; });
-    // 주택
+    // 은퇴 후 지역가입자 건강보험료 (연금소득 50% + 주택 재산 반영, 가정)
+    if (L.retired && earned === 0) { const hp = R(0.0812 * 0.5 * (L.np.benefit + L.retirePay) + (L.house ? L.house.value * 0.0018 : 0)); outflow += hp; lg.healthRetiree += hp; }
+    // 주거비: 무주택이면 월세·전세대출 이자 (가정: 1인 월 50만 · 2인 이상 월 85만 / 부모 보증금 지원(4·5분위) 시 30% 절감)
+    const indep = L.spouse.married || (L.career !== 'child' && a >= Math.min(30, Math.max(25, L.startAge + 1)));
+    if (!L.house && a >= 19 && indep) {
+      // 소득이 낮으면 더 작은 집·공공임대로 (주거비가 소득의 약 18%를 넘지 않게 조정, 최저 연 420만)
+      const rent = R(Math.min((L.spouse.married || kidsLive.length ? 1020 : 600) * (L.tier.tier >= 4 ? 0.7 : 1), Math.max(420, 0.18 * (hh || 0) + (hh ? 0 : 600))));
+      outflow += rent; lg.rent += rent;
+    }
     if (L.house && !L.house.reverse) {
       const it = L.house.loan * 0.042, pr = Math.min(L.house.loan, L.house.orig / 30);
       outflow += it + pr; L.house.loan -= pr; lg.interest += it;
@@ -919,33 +1108,56 @@ const KL = (function () {
       L.house.value *= 1 + 0.015 + 0.06 * gauss(u[S.h1], u[S.h2]);
       lg.houseGain += L.house.value - before;
     }
+    // 재산세(시가 약 0.15% 가정) + 1주택 종합부동산세(공시가 12억 초과분, 공정시장가액 60% × 0.6%)
+    if (L.house) { const pt = R(L.house.value * 0.0015 + Math.max(0, L.house.value * 0.7 - 120000) * 0.6 * 0.006); outflow += pt; lg.propTax += pt; }
+    // 학자금 대출 상환 (취업후상환: 연소득이 상환기준소득(약 2,600만)을 넘으면 초과분의 20%, 실질이자 0 가정)
+    if (L.sLoan > 0 && earned > 2600) { const p = Math.min(L.sLoan, R((earned - 2600) * 0.2)); L.sLoan -= p; outflow += p; lg.loanRepay += p; }
+    // 자동차 (할부 + 보험·유류·세금 유지비, 가정)
+    if (L.car) { const c = (a <= L.car.until ? 700 : 0) + (a < 75 ? 300 : 0); outflow += c; lg.carCost += c; if (a >= 75) L.car = null; }
+    // 부모님 용돈·생활비 (소득분위가 낮을수록 부양 부담 ↑, 가정)
+    if (a >= 30 && !L.retired && (L.parents.f.alive || L.parents.m.alive)) {
+      const pa = R([360, 240, 120, 60, 0][L.tier.tier - 1] * (L.flags.parentsSecure ? 0.5 : 1));
+      if (pa) { outflow += pa; lg.parentsAllow += pa; lg.familyOut += pa; }
+    }
     // 가족 부담 (부모 간병비 등)
     L.burdens.forEach(b => { if (a <= b.until) { outflow += b.perYear; lg.familyOut += b.perYear; } });
-    if (L.chronic) outflow += 40;
+    if (L.chronic) { outflow += 40; lg.living += 40; }
     // 재테크 계좌 (납입은 저축이므로 생활비 조정 전에 반영)
-    const z = marketZ(L, u);
     if (a >= 19) { const f = finYear(L, a, earned, z); outflow += f.out; inflow += f.inc; }
-    // 생활비 (가정값) — 고정지출(양육·보험료·연금보험료·주거·부양)을 뺀 뒤 가계가 소비를 조정한다고 가정
+    // 생활비 (주거·양육 제외: 식비·통신·교통·관리비·여가) — 2026 2분기 가계동향 월평균 소비지출 293만(가구당)을 기준으로
+    //   최소생활비 + 여유소득 × 소비성향(인생관·연령대별)으로 결정
     if (a >= 19) {
       const student = a < L.startAge && !L.retired;
-      const minLiv = L.spouse.married ? 2000 : 1200;
+      const base = L.spouse.married ? 2300 : 1450;
       let cons;
-      if (student) cons = 900 * (1 - 0.5 * L.tier.tuition) + (L.career === 'office' ? 700 * (1 - L.tier.tuition) : 0);
-      else if (earned > 0 && !(L.retired && !L.bridgeUntil)) {
-        const target = (L.spouse.married ? 0.64 * hh + 1900 : 0.66 * hh + 1200) + 0.015 * Math.max(0, L.cash); // 자산이 많을수록 소비도 늘어남(가정)
-        cons = Math.max(minLiv, Math.min(target, 0.92 * hh - outflow));
+      if (student) {
+        cons = 900 * (1 - 0.5 * L.tier.tuition);
+        if (L.career === 'office') {
+          const t = R(700 * (1 - L.tier.tuition));
+          if (t > 0) { L.sLoan += t; if (!L.flags.sLoanLog) { L.flags.sLoanLog = true; log(L, a, 'finance', `🎓 학자금 대출 시작: 등록금 연 ${fm(t)} (취업 후 소득에 따라 상환)`); } }
+        }
+      } else if (hh > 0 && !(L.retired && !L.bridgeUntil)) {
+        const disp = inflow - outflow;
+        const mpc = 0.62 * pm.mpc + (ag.mpc || 0);
+        cons = base + mpc * Math.max(0, disp - base) + 0.012 * Math.max(0, L.cash);
+        cons = Math.max(base * 0.7, Math.min(cons, disp + 0.05 * Math.max(0, L.cash)));
       } else {
-        const target = (L.spouse.married ? 2500 : 1600) + 0.03 * Math.max(0, L.cash); // 노후 필요생활비 조사(국민노후보장패널) 참고 가정
-        cons = Math.max(L.spouse.married ? 1900 : 1200, Math.min(target, (inflow - hh) + 0.06 * Math.max(0, L.cash)));
+        const target = (L.spouse.married ? 2400 : 1500) * (pm.mpc > 1 ? 1.08 : 1) + 0.03 * Math.max(0, L.cash);
+        cons = Math.max(base * 0.7, Math.min(target, (inflow - outflow) + 0.06 * Math.max(0, L.cash)));
       }
-      outflow += cons;
+      cons = R(cons); outflow += cons; lg.living += cons;
+    }
+    // 기초생활보장 (생계급여 중위소득 32% + 주거급여) — 소득·재산이 없는 가구의 최저선 (가정: 1인 연 1,405만 · 2인 이상 2,035만 한도)
+    if (a >= 19 && (L.retired || hh === 0) && L.cash + inflow - outflow < 0 && netWorth(L) < 5000 && !L.house) {
+      const wf = Math.max(0, Math.min(outflow - inflow, L.spouse.married ? 2035 : 1405));
+      if (wf > 0) { inflow += wf; lg.welfare += wf; if (!L.flags.welfareLog) { L.flags.welfareLog = true; log(L, a, 'finance', '🏛️ 기초생활보장(생계·주거급여) 수급 시작 — 최저생활 보장', true); } }
     }
     L.cash += inflow - outflow;
 
     // 운용수익 / 부채이자
     if (L.cash > 0) {
       const pf = INVEST[a < 19 ? 'cash' : L.invest] || INVEST.stable;
-      const rr = clamp(mixRet(pf.w, z), -0.6, 1.0);
+      const r0 = mixRet(pf.w, z), rr = clamp(a >= 19 && pm.ret ? (pm.ret < 0 ? (r0 > 0 ? Math.max(0, r0 + pm.ret) : r0) : r0 + pm.ret) : r0, -0.6, 1.0);
       let gain = L.cash * rr;
       // 금융소득 과세: 15.4% 원천징수, 연 2,000만 초과분은 종합과세(게임은 30%로 근사)
       if (gain > 0) { const tax = Math.min(gain, 2000) * 0.154 + Math.max(0, gain - 2000) * 0.30; gain -= tax; lg.finTax += tax; }
@@ -953,13 +1165,13 @@ const KL = (function () {
       if (a >= 19 && rr < -0.15 && pf.risk >= 4) { log(L, a, 'finance', `📉 시장 폭락: 투자자산 ${R(rr * 100)}%`, true); L.sanity -= 6; }
       if (a >= 19 && rr > 0.3 && pf.risk >= 4) log(L, a, 'finance', `🚀 투자 대박: 투자자산 +${R(rr * 100)}%`);
     } else {
-      const it = -L.cash * 0.07; L.cash -= it; lg.interest += it;
+      const it = -L.cash * 0.055; L.cash -= it; lg.interest += it; // 신용대출 금리(실질 근사)
     }
     // 신용·멘탈
     if (L.cash < 0) L.credit = Math.max(300, L.credit - (L.cash < -5000 ? 35 : 12)); else L.credit = Math.min(950, L.credit + 8);
     L.sanity = clamp(L.sanity + (L.cash > 0 ? 0.5 : -2), 5, 100);
     // 주택 급매 (현금 고갈 시)
-    if (L.house && !L.house.reverse && L.cash < -5000) {
+    if (L.house && !L.house.reverse && L.cash < -8000) {
       const eq = L.house.value * 0.92 - L.house.loan;
       L.cash += eq; log(L, a, 'finance', `🏚️ 현금 고갈로 살던 집 급매 (시세 대비 -8%) → 순유입 ${fm(eq)}`, true);
       L.house = null; L.sanity -= 10;
@@ -976,6 +1188,11 @@ const KL = (function () {
     // 채무조정
     const lim = Math.max(8000, 2 * hh);
     if (L.cash < -lim && L.flags.bankrupt) L.cash = -lim; // 회생 변제 중: 추가 부채 동결 (게임 단순화)
+    if (L.cash < -lim && L.retired && !L.house && !L.flags.medicaid) { // 노년 빈곤: 채무조정 대신 기초생활·의료급여 수급
+      L.flags.medicaid = true; lg.welfare += -L.cash; L.cash = 0; L.sanity -= 10;
+      log(L, a, 'finance', '🏛️ 노후 자금 고갈 → 기초생활수급·의료급여 1종 전환 (의료비 본인부담 대폭 감소)', true);
+    }
+    if (L.cash < -lim && L.flags.medicaid && L.retired) L.cash = -lim * 0.5; // 수급 중 추가 채무 동결(단순화)
     if (L.cash < -lim && !L.flags.bankrupt) {
       L.flags.bankrupt = true; lg.bankrupt = 1;
       L.cash = -3000; L.credit = 450; L.sanity -= 20;
@@ -989,8 +1206,12 @@ const KL = (function () {
     const has = id => override ? override.includes(id) : !!L.ins[id];
     const f = (ev.noInfl ? 1 : L.medF) || 1;
     const gross = R(ev.gross * f), nonCov = R(ev.nonCov * f);
+    if (ev.autoIns) { // 상대 자동차보험이 치료비 전액·휴업손해 80% 보상
+      const care0 = R((ev.careCost || 0) * f), loss0 = R((ev.loss || 0) * 0.2);
+      return { gross, nonCov, care: care0, copay: 0, capRefund: 0, nhis: 0, oop: 0, silson: 0, fixed: 0, support: 0, loss: loss0, net: loss0, autoIns: gross + care0 };
+    }
     const covered = Math.max(0, gross - nonCov);
-    let copay = R(covered * (1 - ev.nhisRate));
+    let copay = R(covered * (1 - ev.nhisRate) * (L.flags.medicaid ? 0.1 : 1)); // 의료급여 1종: 본인부담 거의 없음
     const cap = R(copayCap(L) * f);
     const capRefund = ev.cat === 'liability' || ev.cat === 'ltc' ? 0 : Math.max(0, copay - cap);
     copay -= capRefund;
@@ -1003,7 +1224,7 @@ const KL = (function () {
     else if (ev.cat === 'kid') silson = ev.childIns ? R(oop * 0.8) : 0;
     else if (has('silson')) silson = Math.min(5000, R(copay * 0.8 + Math.max(0, nonCov - 3) * 0.7)); // 급여 80%·비급여 70%, 연 5,000만 한도(4세대 단순화)
     let fixed = 0;
-    if (ev.cat === 'cancer' && has('cancer') && (override || !L.paid.cancer)) fixed = 5000;
+    if (ev.cat === 'cancer' && has('cancer') && (override || !L.paid.cancer)) fixed = ev.minor ? 1000 : 5000; // 유사암(갑상선 등)은 20%
     else if (ev.cat === 'bh' && has('brainHeart') && (override || !L.paid.bh)) fixed = 3000;
     else if (ev.cat === 'injury' && has('care')) fixed = 300;
     else if (ev.cat === 'ltc' && has('care')) fixed = 1000;
@@ -1024,8 +1245,8 @@ const KL = (function () {
     const c = medCalc(L, ev), lg = L.ledger, a = L.age;
     const cashBefore = L.cash;
     L.cash += c.silson + c.fixed + c.support - c.oop - c.loss;
-    lg.grossMed += c.gross; lg.nhis += c.nhis; lg.capRefund += c.capRefund; lg.support += c.support; lg.oop += c.oop; lg.silson += c.silson; lg.fixed += c.fixed; lg.incomeLoss += c.loss;
-    if (ev.cat === 'cancer' && c.fixed) L.paid.cancer = true;
+    lg.grossMed += c.gross + (c.autoIns ? c.care : 0); lg.autoIns += c.autoIns || 0; lg.nhis += c.nhis; lg.capRefund += c.capRefund; lg.support += c.support; lg.oop += c.oop; lg.silson += c.silson; lg.fixed += c.fixed; lg.incomeLoss += c.loss;
+    if (ev.cat === 'cancer' && c.fixed && !ev.minor) L.paid.cancer = true;
     if (ev.cat === 'bh' && c.fixed) L.paid.bh = true;
     let crisis = false;
     if (c.net > Math.max(800, 0.2 * L.lastHousehold) && cashBefore < c.net) {
@@ -1033,6 +1254,7 @@ const KL = (function () {
     }
     const alt = medCalc(L, ev, ['silson', 'cancer', 'brainHeart', 'care']);
     lg.events.push({ age: a, title: ev.title, cat: ev.cat, mode: ev.mode || '', ...c, crisis, alt: { silson: alt.silson, fixed: alt.fixed, net: alt.net }, better: ev.better || '' });
+    if (c.autoIns) { if (!ev.silent) log(L, a, 'medical', `🚗 [${ev.title}] 진료비 ${fm(c.autoIns)}는 상대 자동차보험이 보상${c.loss ? ' / 휴업손해 미보상분 ' + fm(c.loss) : ''}`, true); return c; }
     if (!ev.silent) {
       log(L, a, 'medical', `🏥 [${ev.title}] 총진료비 ${fm(c.gross)} → 건보 ${fm(c.nhis)}${c.capRefund ? '(상한제 ' + fm(c.capRefund) + ' 포함)' : ''} / 초기 본인부담 ${fm(c.oop)} → 실손 ${fm(c.silson)}${c.support ? ', 재난적의료비 ' + fm(c.support) : ''}, 정액보험금 ${fm(c.fixed)}${c.loss ? ' / 소득 공백 ' + fm(c.loss) : ''}`, true);
       if (crisis) log(L, a, 'medical', `🚨 의료비 유동성 위기: 필요한 돈 ${fm(c.net)} > 보유 현금 ${fm(Math.max(0, cashBefore))} → 대출·연체 발생`, true);
@@ -1045,7 +1267,8 @@ const KL = (function () {
     return (m == null ? 0 : m) * (kind === 'bh' ? 0.85 : 1);
   }
   function severeEv(L, cat, mode) {
-    const early = cat === 'cancer' && (L.age - L.lastCheckup <= 2);
+    const T = cat === 'cancer' ? CANCER_T[L.cancerType || 'other'] : null;
+    const early = cat === 'cancer' && (L.age - L.lastCheckup <= (pmod(L).early ? 3 : 2));
     const k = early ? 0.75 : 1;
     // 암 표준: 유방암 1년 초과 평균 의료비 약 2,380만(삼성화재 분석)·중증 비급여 본인부담률 8.8%(건보공단 2024 실태조사) 참고
     // 암 신약: 키트루다 비급여 약값 연 약 7,140만(2026.4 보도) → 1년 비급여 6,600만 가정
@@ -1053,15 +1276,86 @@ const KL = (function () {
     // 간병: 요양병원 간병비 월 200~267만(2025.9 보도) → 간병인 3~6개월 비용을 별도(실손 미보상)로 반영
     const drug = cat === 'cancer' && L.cancerNewDrug;
     const base = cat === 'cancer'
-      ? (mode === 'adv' ? (drug ? { gross: 9000, nonCov: 6600, careCost: 0 } : { gross: 3000, nonCov: 600, careCost: 600 }) : { gross: 2400, nonCov: 300, careCost: 0 })
+      ? (mode === 'adv' ? (drug ? { gross: 9000, nonCov: 6600, careCost: 0 } : { gross: R(T.gross * 1.25), nonCov: T.nonCov + 300, careCost: T.minor ? 0 : 600 }) : { gross: T.gross, nonCov: T.nonCov, careCost: 0 })
       : (mode === 'adv' ? { gross: 2400, nonCov: 500, careCost: 1200 } : { gross: 1600, nonCov: 250, careCost: 0 });
     const r = lossRatio(L, cat);
-    let loss = L.lastEarned * r;
+    let loss = L.lastEarned * r * (T && T.minor ? 0.3 : 1);
     if (L.career === 'self' || L.career === 'creator') loss += L.retired ? 0 : 600;
     return {
-      title: cat === 'cancer' ? (early ? '조기 발견 암 수술·치료' : '중증 암(악성신생물) 진단·수술·항암') : '급성 심근경색·뇌졸중 응급 시술·입원',
-      cat, mode, early, drug, gross: base.gross * k, nonCov: base.nonCov * k, careCost: base.careCost, nhisRate: cat === 'cancer' ? 0.95 : 0.9, loss,
+      title: cat === 'cancer' ? `${early ? '조기 발견 ' : ''}${T.label} 진단·수술·치료` : '급성 심근경색·뇌졸중 응급 시술·입원',
+      cat, mode, early, drug, minor: !!(T && T.minor), gross: base.gross * k, nonCov: base.nonCov * k, careCost: base.careCost, nhisRate: cat === 'cancer' ? 0.95 : 0.9, loss,
       better: cat === 'cancer' ? (drug ? '비급여 면역항암제(연 약 6,600만) 투여 + 휴직기 생활비 확보' : '상급종합병원 1인실 + 간병인 3개월 + 휴직기 생활비 확보') : '골든타임 시술 + 집중 재활 + 간병인 6개월 + 소득 공백 보전'
+    };
+  }
+
+  // ---------- v4 질병·사고 모듈 (연간 확률은 공개 통계의 규모를 참고한 게임용 추정값) ----------
+  function diseaseModule(L, a, y, add, pm, dzM, youngAcc) {
+    const D = L.dz;
+    // 교통사고: 연 부상자 약 25만 명(인구 대비 약 0.5%) — 15~29세·고령층에서 높음 (도로교통공단 통계 규모 참고)
+    const pT = (a < 13 ? 0.002 : a < 30 ? 0.007 : a < 65 ? 0.005 : 0.006) * youngAcc * pm.acc * (L.flags.bike && a <= 20 ? 3 : 1) * (L.car ? 1.2 : 1);
+    if (a >= 3 && y[Y.traffic] < pT) add(L => accident(L, 'traffic', y));
+    // 운동·레저 중 부상 (십자인대·골절)
+    if (a >= 12 && a <= 55) {
+      const p = (a < 30 ? 0.012 : 0.006) * youngAcc * pm.acc * (L.flags.sport ? 2 : 1) * (L.persona === 'health' || L.persona === 'free' ? 1.3 : 1);
+      if (y[Y.sport] < p) add(L => accident(L, 'sport', y));
+    }
+    if (a < 19) return;
+    // 허리디스크
+    if (!D.disc && a >= 30 && a <= 70 && y[Y.disc] < 0.005 * dzM * (L.jobClass >= 2 ? 1.5 : 1)) add(L => { D.disc = true; return decisionSpec(L, 'dz_disc', {}); });
+    // 우울증·번아웃
+    if (!D.depress && a <= 64 && y[Y.depress] < 0.004 * dzM * (L.sanity < 50 ? 2 : 1) * (L.playerAge === '30대' && a >= 28 && a < 40 ? 1.4 : 1)) add(L => { D.depress = true; return decisionSpec(L, 'dz_mental', {}); });
+    // 지방간 → 간경변
+    if (!D.liver && a >= 40 && a <= 70 && y[Y.liver] < 0.0015 * dzM * (L.persona === 'free' ? 1.6 : 1) * (L.dna.id === 'meta_fam' ? 1.4 : 1)) add(L => {
+      D.liver = true; L.chronic = true; L.hp -= 10;
+      medApply(L, { title: '간경변 진단 · 입원 치료', cat: 'disease', gross: 1500, nonCov: 300, nhisRate: 0.9, loss: R(L.lastEarned * lossRatio(L) * 0.25), better: '간 전문병원 집중치료 + 1인실' });
+    });
+    // 당뇨 합병증 → 만성신부전 혈액투석 (산정특례 본인부담 10%)
+    if (!L.dialysis && L.chronic && a >= 50 && y[Y.dialysis] < 0.004 * L.dna.meta * dzM) add(L => { L.dialysis = true; L.hp -= 15; log(L, L.age, 'medical', '🩸 당뇨 합병증으로 만성신부전 — 주 3회 혈액투석 시작 (산정특례 본인부담 10%)', true); });
+    if (L.dialysis) add(L => { medApply(L, { title: '혈액투석 (연간)', cat: 'disease', gross: 2600, nonCov: 120, nhisRate: 0.9, loss: L.retired ? 0 : R(L.lastEarned * 0.3), silent: true }); });
+    // 대상포진
+    if (a >= 50 && !D.shingles && y[Y.shingles] < 0.008 * dzM) add(L => { D.shingles = true; medApply(L, { title: '대상포진 치료', cat: 'minor', gross: 90, nonCov: 40, nhisRate: 0.7 }); });
+    // 백내장
+    if (!D.cataract && a >= 60 && y[Y.cataract] < 0.035 * dzM) add(L => { D.cataract = true; return decisionSpec(L, 'dz_eye', {}); });
+    // 무릎 인공관절
+    if (!D.knee && a >= 65 && y[Y.knee] < 0.012 * dzM * (L.persona === 'health' ? 0.8 : 1)) add(L => { D.knee = true; return decisionSpec(L, 'dz_knee', {}); });
+    // 노인성 폐렴
+    if (a >= 65 && y[Y.pneumonia] < (a < 75 ? 0.015 : a < 85 ? 0.03 : 0.05) * dzM) add(L => {
+      medApply(L, { title: '노인성 폐렴 입원', cat: 'disease', gross: 450, nonCov: 90, nhisRate: 0.8, careCost: L.age >= 75 ? 150 : 0, better: '1인실 + 간병인' });
+      L.hp -= L.age >= 80 ? 8 : 5;
+    });
+  }
+  function accident(L, kind, y) {
+    const a = L.age, sv = y[Y.sev], work = !(L.retired && !L.bridgeUntil) && a >= 19;
+    const wk = w => work ? R(L.lastEarned * w / 52 * (L.career === 'civil' ? 0.3 : 1)) : 0;
+    if (kind === 'traffic') {
+      const victim = y[Y.fault] < 0.55; // 피해자면 상대 자동차보험이 치료비·휴업손해(80%) 보상
+      const ev = sv < 0.75 ? { title: '교통사고 경상 (염좌·타박상)', gross: 200, nonCov: 60, nhisRate: 0.7, loss: wk(2), hp: 2 }
+        : sv < 0.96 ? { title: '교통사고 골절 수술·입원', gross: 1200, nonCov: 300, nhisRate: 0.8, loss: wk(12), hp: 8 }
+          : { title: '교통사고 중상 (척추·뇌손상)', gross: 4000, nonCov: 800, careCost: 1200, nhisRate: 0.9, loss: wk(40), hp: 25, severe: true };
+      medApply(L, Object.assign({}, ev, { cat: 'injury', autoIns: victim, title: ev.title + (victim ? ' — 상대 자동차보험 처리' : ' — 내 과실·단독사고'), better: '비급여 재활 + 간병인 + 휴업 소득 보전' }));
+      L.hp -= ev.hp; L.sanity -= ev.severe ? 12 : 3;
+      if (ev.severe && y[Y.spare] < 0.4) { L.disabled = true; L.incomeMult *= 0.6; log(L, a, 'medical', '♿ 교통사고 후유장해 — 소득 능력 40% 감소', true); }
+      if (!victim && L.flags.bike && a <= 20) { L.cash -= 800; L.ledger.selfLoss += 800; log(L, a, 'finance', '🛵 유상운송 보험 미가입 오토바이 사고 — 상대방 피해 배상 -800만', true); }
+    } else {
+      const ev = sv < 0.6 ? { title: '운동 중 발목·손목 골절', gross: 300, nonCov: 90, nhisRate: 0.75, loss: wk(3), hp: 3 }
+        : { title: '운동 중 십자인대 파열 재건술', gross: 750, nonCov: 300, nhisRate: 0.75, loss: wk(8), hp: 5 };
+      medApply(L, Object.assign({}, ev, { cat: 'injury', better: '비급여 재활·도수치료 + 휴업 소득 보전' }));
+      L.hp -= ev.hp;
+    }
+  }
+  function careEv(L, short, label, e) {
+    const work = !(L.retired && !L.bridgeUntil) && L.age >= 19;
+    const loss = work ? R(L.lastEarned * (e.wk || 0) / 52 * (L.career === 'civil' ? 0.3 : 1)) : 0;
+    return { title: `${short} — ${label.replace(/^[^\s]+\s/, '')}`, cat: 'disease', gross: e.gross, nonCov: e.nonCov, careCost: e.careCost || 0, nhisRate: e.nhisRate, loss, better: '' };
+  }
+  function careDec(key, short, title, desc, rows) {
+    return {
+      short, title, kind: 'care', desc: () => desc,
+      options: L => rows.map(([id, label, e, extra, after]) => {
+        const c = e.gross ? medCalc(L, careEv(L, short, label, e)) : null;
+        const sub = (c ? `실제 부담 약 ${fm(c.net)}${c.silson + c.fixed ? ' (보험금 ' + fm(c.silson + c.fixed) + ' 반영)' : ''}` : '치료비 0원') + ' / ' + extra;
+        return opt(id, label, sub, id === 'adv' ? ['health'] : id === 'skip' ? ['wealth', 'experience'] : ['wealth'], L => { if (e.gross) medApply(L, careEv(L, short, label, e)); after(L); });
+      })
     };
   }
 
@@ -1077,7 +1371,9 @@ const KL = (function () {
     });
     if (L.pendingDeath && a >= L.pendingDeath.age) add(L => die(L, L.pendingDeath.cause));
     // 청소년기
-    if (a <= 18 && u[S.youth] < 0.10) add(L => {
+    const pm = pmod(L), ag = ageg(L), y = L.ys[Math.min(a, MAX_AGE)];
+    const dzM = pm.dz * (ag.dz || 1), youngAcc = a <= 29 ? (ag.acc || 1) : 1;
+    if (a <= 18 && u[S.youth] < 0.10 * Math.min(1.6, youngAcc)) add(L => {
       const t = [
         { title: '급성 폐렴·고열 입원', gross: 150, nonCov: 50, nhisRate: 0.8, hp: 3 },
         { title: '체육시간 골절·인대 수술', gross: 280, nonCov: 90, nhisRate: 0.75, hp: 4, cat: 'injury' },
@@ -1101,9 +1397,18 @@ const KL = (function () {
         log(L, L.age, 'finance', `🕯️ ${k === 'f' ? '아버지' : '어머니'} 별세 (향년 ${p.age}세)`, true);
         if (!L.parents.f.alive && !L.parents.m.alive && !L.inherited) {
           L.inherited = true;
-          const share = R(L.tier.inherit / (L.siblings.length + 1));
+          const n = L.siblings.length + 1;
+          // 부모 재산 − 생전 증여분 − 간병 지출(가정) → 상속세(10년 내 증여 합산) → 형제 균분
+          const giftAmt = L.ledger.giftRecv + L.ledger.giftTax;
+          const est = Math.max(0, ESTATE[L.tier.tier - 1] * (L.flags.parentsSecure ? 1.05 : 1) - giftAmt * n - (L.flags.parentBiz ? ESTATE[L.tier.tier - 1] * 0.4 : 0) - (L.flags.parentPaidWedding ? 2000 : 0));
+          const recentGift = L.age - 31 < 10 ? giftAmt * n : 0;
+          const tax = Math.max(0, inheritTax(est + recentGift) - (recentGift ? L.ledger.giftTax * n : 0));
+          const share = R((est - tax) / n), myTax = R(tax / n);
           if (L.tier.tier === 1 && u[S.sibRepay] < 0.3) log(L, L.age, 'finance', '📜 부모님 채무가 재산보다 많아 상속포기 (가족 빚 승계 차단)');
-          else if (share > 0) { L.cash += share; L.ledger.inheritance += share; log(L, L.age, 'finance', `📜 상속 ${fm(share)} (형제 ${L.siblings.length + 1}인 균분, 가상)`, true); }
+          else if (share > 0) {
+            L.cash += share; L.ledger.inheritance += share; L.ledger.inheritGross += R(est / n); L.ledger.inheritTax += myTax;
+            log(L, L.age, 'finance', `📜 상속: 부모님 재산 ${fm(est)} → 상속세 ${fm(tax)}${tax ? '' : ' (일괄공제 5억 이하라 비과세)'} → 형제 ${n}인 균분, 내 몫 ${fm(share)}`, true);
+          }
         }
       });
     });
@@ -1145,26 +1450,33 @@ const KL = (function () {
     }
     L.kids.forEach(k => {
       if (kidAge(L, k) === 25 && !k.status) add(L => {
-        const p = (k.abroad ? 0.82 : 0.68) - (k.chronicCare ? 0.15 : 0);
+        const p = (k.abroad ? 0.82 : 0.68) - (k.chronicCare ? 0.15 : 0) + (L.kidEdu > 1.2 ? 0.08 : L.kidEdu < 0.5 ? -0.04 : 0) + (L.flags.kidsFirst ? 0.05 : 0);
         if (u[S.childOutcome] < p) { k.status = 'success'; log(L, L.age, 'finance', `🎓 자녀 ${k.n}이(가) 취업·독립에 성공했습니다`, true); L.sanity += 6; }
         else { k.status = 'support'; L.burdens.push({ label: '자녀 취업준비 지원', perYear: 1000, until: L.age + 3 }); log(L, L.age, 'finance', `🧳 자녀 ${k.n} 취업 준비 장기화 — 3년간 연 1,000만 지원`, true); }
       });
     });
+    // 자녀 초등 입학 → 사교육 결정
+    if (L.kids.length && !L.flags.kidEduSet && kidAge(L, L.kids[0]) === 7) add(L => { L.flags.kidEduSet = true; return decisionSpec(L, 'kid_edu', {}); });
+    if (L.flags.kidsFirst && a === 60 && L.kids.length) add(L => { const g = R(Math.min(3000 * L.kids.length, Math.max(0, L.cash) * 0.5)); if (g <= 0) return; L.cash -= g; L.ledger.kidsCost += g; L.ledger.familyOut += g; log(L, L.age, 'finance', `💍 자녀 결혼·독립 자금 지원 ${fm(g)}`, true); });
     // 만성질환
     if (a >= 30 && !L.chronic) {
-      const p = (a < 40 ? 0.008 : a < 50 ? 0.018 : a < 60 ? 0.028 : 0.03) * L.dna.meta * (a - L.lastExercise <= 1 ? 0.75 : 1);
+      const p = (a < 40 ? 0.008 : a < 50 ? 0.018 : a < 60 ? 0.028 : 0.03) * L.dna.meta * (a - L.lastExercise <= 1 ? 0.75 : 1) * (1 + (dzM - 1) * 0.6);
       if (u[S.chronic] < p) add(L => {
         L.chronic = true; L.hp -= 4;
         log(L, L.age, 'medical', '🩺 고혈압·당뇨(만성질환) 진단, 약 복용 시작 — 이후 신규 보험은 유병자 심사(가상 1.45배)', true);
       });
     }
     // 암
-    if (!L.hadCancer && u[S.cancer] < cancerInc(a, L.gender) * L.dna.cancer) add(L => { L.hadCancer = true; L.cancerNewDrug = L.xs[Math.min(L.age, MAX_AGE)][X.newDrug] < 0.25; return decisionSpec(L, 'treat_cancer', {}); });
+    if (!L.hadCancer && u[S.cancer] < cancerInc(a, L.gender) * L.dna.cancer * (1 + (dzM - 1) * 0.4)) add(L => {
+      L.hadCancer = true; L.cancerType = pickCancer(L, y[Y.cType]);
+      L.cancerNewDrug = L.xs[Math.min(L.age, MAX_AGE)][X.newDrug] < CANCER_T[L.cancerType].drug;
+      return decisionSpec(L, 'treat_cancer', {});
+    });
     // 뇌심혈관
-    else if (L.bhCount < 2 && a >= 25 && u[S.bh] < bhInc(a, L.gender) * L.dna.bh * (L.chronic ? 1.6 : 1)) add(L => { L.bhCount++; return decisionSpec(L, 'treat_bh', {}); });
+    else if (L.bhCount < 2 && a >= 25 && u[S.bh] < bhInc(a, L.gender) * L.dna.bh * (L.chronic ? 1.6 : 1) * (pm.bh || 1)) add(L => { L.bhCount++; return decisionSpec(L, 'treat_bh', {}); });
     // 상해
     if (a >= 19 && a < 65) {
-      const p = 0.03 * (L.jobClass === 3 ? 2 : L.jobClass === 2 ? 1.4 : 1);
+      const p = 0.03 * (L.jobClass === 3 ? 2 : L.jobClass === 2 ? 1.4 : 1) * pm.acc;
       if (u[S.injury] < p) add(L => {
         const lossMap = { tech: 450, self: 600, creator: 500, office: 150, civil: 50 };
         const ev = { title: L.jobClass >= 2 ? '작업·운행 중 골절·디스크 시술' : '맹장·디스크 등 수술 입원', cat: 'injury', gross: 480, nonCov: 180, nhisRate: 0.7, loss: L.retired ? 0 : (lossMap[L.career] || 0), better: '비급여 도수·재활치료 + 휴업 소득 보전' };
@@ -1172,9 +1484,12 @@ const KL = (function () {
       });
     }
     if (a >= 65 && u[S.fall] < (a < 75 ? 0.015 : 0.03)) add(L => { medApply(L, { title: '낙상 고관절 골절 수술·입원', cat: 'injury', gross: 900, nonCov: 300, nhisRate: 0.8, loss: 0, better: '1인실 + 전문 재활 + 간병인' }); L.hp -= 10; });
+    diseaseModule(L, a, y, add, pm, dzM, youngAcc);
     // 장기요양
     if (a >= 70 && !L.inCare && u[S.care] < (a < 75 ? 0.01 : a < 80 ? 0.02 : a < 85 ? 0.04 : 0.06) * L.dna.meta) add(L => {
-      L.inCare = true; log(L, L.age, 'medical', '🧓 장기요양 등급 판정 — 요양·간병 생활 시작 (공적 장기요양 + 본인부담·간병비)', true);
+      L.inCare = true;
+      const dem = L.dna.id === 'meta_fam' || y[Y.spare] < 0.45; // 장기요양 인정자의 상당수가 치매 동반(가정)
+      log(L, L.age, 'medical', `🧓 ${dem ? '치매 진단 및 ' : ''}장기요양 등급 판정 — 요양·간병 생활 시작 (공적 장기요양 + 본인부담·간병비)`, true);
     });
     // 요양원: 본인부담 20% + 식비 등 → 월 약 80만(2026, 2등급 예시) / 요양병원 + 간병인: 간병비 월 200만 이상
     if (L.inCare) add(L => {
@@ -1187,7 +1502,7 @@ const KL = (function () {
     add(L => {
       if (!L.alive) return;
       const hpM = L.hp >= 60 ? 1 : L.hp >= 40 ? 1.35 : L.hp >= 25 ? 1.9 : 2.8;
-      const p = qx(L.age, L.gender) * BG_FACTOR[L.gender] * hpM * (L.inCare ? 1.8 : 1) * (L.disabled ? 1.3 : 1);
+      const p = qx(L.age, L.gender) * BG_FACTOR[L.gender] * hpM * (L.inCare ? 1.8 : 1) * (L.disabled ? 1.3 : 1) * (L.dialysis ? 1.8 : 1) * pm.mort;
       if (L.hp <= 0) return die(L, '건강 악화(누적 합병증)');
       if (u[S.mort] < p) return die(L, L.age >= L.baseLifeExp ? '노환(자연사)' : (L.age < 40 ? '불의의 사고' : (L.chronic ? '만성질환 합병증' : '심폐질환 등 기타 질환')));
     });
@@ -1210,6 +1525,11 @@ const KL = (function () {
       log(L, L.age, 'finance', `🕊️ 정기사망보험금 1억 원이 ${dependents ? '유족에게' : '법정상속인에게'} 지급되었습니다`, true);
     }
     log(L, L.age, 'medical', `⚰️ ${L.age}세, ${cause}로 생을 마감했습니다.`, true);
+    // 내 재산의 상속세 (유족 부담)
+    const nw = netWorth(L), lg = L.ledger;
+    lg.estateTax = nw > 0 ? inheritTax(nw, { spouse: L.spouse.married, finShare: Math.max(0, L.cash + accBal(L)) / Math.max(1, nw) }) : 0;
+    lg.heirNet = nw - lg.estateTax;
+    if (lg.estateTax > 0) log(L, L.age, 'finance', `🧾 남긴 재산 ${fm(nw)}에 상속세 ${fm(lg.estateTax)} — 유족 실수령 ${fm(lg.heirNet)}`, true);
   }
 
   function runQueue(L) {
@@ -1243,7 +1563,7 @@ const KL = (function () {
     if (opt.life) opt.life(L);
     if (opt.fin) { if (L.strategy) enforce(L); else opt.fin(L); }
     if (L.strategy && L.age >= 19) enforce(L);
-    L.choices.push({ k: spec.key, o: opt.id, l: opt.label.replace(/^[^\s]+\s/, ''), age: L.age, src, tags: opt.tags || [] });
+    L.choices.push({ k: spec.key, o: opt.id, l: opt.label.replace(/^[^\s]+\s/, ''), age: L.age, src, tags: opt.tags || [], alts: spec.options.filter(o => !o.disabled).map(o => [o.id, o.label.replace(/^[^\s]+\s/, '')]) });
     (opt.tags || []).forEach(t => { if (L.interests[t] != null) L.interests[t]++; });
     if (spec.kind === 'poll') L.explicitInterest = opt.id;
     log(L, L.age, 'decision', `${src === 'auto' ? '🤖' : '✅'} [${spec.short || spec.title}] ${opt.label.replace(/^[^\s]+\s/, '')}`, true);
@@ -1261,7 +1581,7 @@ const KL = (function () {
   }
 
   // ---------- 의사결정 정의 ----------
-  const MILESTONES = { 13: ['edu13'], 19: ['career19', 'ins19'], 28: ['fin28'], 32: ['marry32'], 35: ['family35', 'self35'], 38: ['house38'], 40: ['poll40'], 43: ['career43'], 50: ['mid50'], 60: ['retire60'], 72: ['late72'] };
+  const MILESTONES = { 13: ['edu13'], 16: ['teen16'], 19: ['career19', 'ins19'], 25: ['invest25'], 26: ['pension26'], 27: ['tempt27'], 28: ['fin28'], 30: ['job30'], 32: ['marry32', 'wed32'], 35: ['family35', 'self35'], 38: ['house38'], 40: ['poll40', 'checkup40'], 43: ['career43'], 45: ['pension45'], 50: ['mid50'], 58: ['retire58'], 60: ['retire60'], 72: ['late72'] };
   const MILESTONE_AGES = Object.keys(MILESTONES).map(Number);
 
   function opt(id, label, sub, tags, life, fin, extra) { return Object.assign({ id, label, sub, tags, life, fin }, extra || {}); }
@@ -1280,10 +1600,10 @@ const KL = (function () {
       short: '19세 진로', title: '19세 성인 전환기: 어떤 길로 갈까?', kind: 'milestone',
       desc: L => `진로는 소득·직업급수(사고 위험)·유급병가 여부를 바꿉니다. 등록금 부모 지원: ${R(L.tier.tuition * 100)}%`,
       options: L => [
-        opt('univ', '🎓 4년제 대학 → 사무·IT직', `24세 취업, 초봉 약 ${fm(3600 * L.eduBoost)} / 상해 1급 / 유급병가 일부`, ['education', 'career'], L => { Object.assign(L, { career: 'office', jobLabel: '대학생 → 사무·IT직', startAge: 24, wage: 3600 * L.eduBoost, jobClass: 1, workUntil: 60 }); }),
-        opt('tech', '🔧 기술·현장직 조기 취업', '19세부터 초봉 3,000만 / 상해 2~3급(사고 위험 2배)', ['career', 'wealth'], L => { Object.assign(L, { career: 'tech', jobLabel: '현장 기술직', startAge: 19, wage: 3000, jobClass: 3, workUntil: 60 }); }),
-        opt('civil', '🏛️ 공무원 준비 → 공무원', '22세 임용, 초봉 3,100만 / 실직 없음·유급병가 / 상승폭 완만', ['safety', 'career'], L => { Object.assign(L, { career: 'civil', jobLabel: '공시생 → 공무원', startAge: 22, wage: 3100, jobClass: 1, workUntil: 60 }); }),
-        opt('creator', '🚀 창업·크리에이터 도전', '수입 편차 극대(대박~폐업) / 유급병가 없음 / 65세까지 일함', ['experience', 'wealth'], L => { Object.assign(L, { career: 'creator', jobLabel: '창업가·크리에이터', startAge: 19, wage: 2400, level: L.creatorBoost, jobClass: 2, workUntil: 65 }); })
+        opt('univ', '🎓 4년제 대학 → 사무·IT직', `24세 취업, 초봉 약 ${fm(3300 * L.eduBoost)} (기업 규모에 따라 ×0.85~1.35) / 등록금 ${L.tier.tuition < 1 ? '학자금 대출' : '부모 지원'} / 유급병가 일부`, ['education', 'career'], L => { Object.assign(L, { career: 'office', jobLabel: '대학생 → 사무·IT직', startAge: 24, wage: 3300 * L.eduBoost, jobClass: 1, workUntil: 60 }); setFirm(L); }),
+        opt('tech', '🔧 기술·현장직 조기 취업', '19세부터 초봉 약 2,700만 (기업 규모별 차등) / 상해 2~3급(사고 위험 2배)', ['career', 'wealth'], L => { Object.assign(L, { career: 'tech', jobLabel: '현장 기술직', startAge: 19, wage: 2700, jobClass: 3, workUntil: 60 }); setFirm(L); }),
+        opt('civil', '🏛️ 공무원 준비 → 9급 공무원', '22세 임용, 9급 초임 연 약 3,400만(수당 포함) / 실직 없음·유급병가 / 상승폭 완만', ['safety', 'career'], L => { Object.assign(L, { career: 'civil', jobLabel: '공시생 → 공무원', startAge: 22, wage: 3400, jobClass: 1, workUntil: 60 }); setFirm(L); }),
+        opt('creator', '🚀 창업·크리에이터 도전', '첫해 수입 약 2,000만(자영업 평균 사업소득 연 1,938만) · 편차 극대 / 국민연금·건보 전액 본인 부담 / 65세까지 일함', ['experience', 'wealth'], L => { Object.assign(L, { career: 'creator', jobLabel: '창업가·크리에이터', startAge: 19, wage: 2000, level: L.creatorBoost, jobClass: 2, workUntil: 65 }); setFirm(L); })
       ]
     },
     ins19: {
@@ -1314,16 +1634,16 @@ const KL = (function () {
     },
     marry32: {
       short: '32세 결혼', title: '32세 결혼 기로: 혼자일까, 함께일까?', kind: 'milestone',
-      desc: () => '결혼은 소득 구조·지출·위험 공유를 바꿉니다. 결혼비용은 2,000만 원으로 가정합니다.',
+      desc: () => '결혼은 소득 구조·지출·위험 공유를 바꿉니다. 결혼 후 생활비·주거비가 2인 기준으로 늘고, 결혼식 비용은 바로 다음 선택에서 정합니다.',
       options: L => [
-        opt('dual', '💑 결혼 + 맞벌이', '가구소득 크게 증가 / 결혼비용 -2,000만', ['family', 'wealth'], L => { L.spouse = { married: true, dual: true, wage: Math.max(3000, 0.85 * L.lastEarned) }; L.cash -= 2000; L.sanity += 5; }),
-        opt('single_earner', '🏡 결혼 + 외벌이 (배우자 가사·육아)', '소득은 그대로, 생활비는 증가 / 행복도 +8', ['family'], L => { L.spouse = { married: true, dual: false, wage: 0 }; L.cash -= 2000; L.sanity += 8; }),
+        opt('dual', '💑 결혼 + 맞벌이', '가구소득 크게 증가 / 생활비·주거비 2인 기준', ['family', 'wealth'], L => { L.spouse = { married: true, dual: true, wage: Math.max(2800, 0.8 * L.lastEarned) }; L.marriedAge = L.age; L.sanity += 5; }),
+        opt('single_earner', '🏡 결혼 + 외벌이 (배우자 가사·육아)', '소득은 그대로, 생활비는 2인 기준 / 배우자 인적공제 / 행복도 +8', ['family'], L => { L.spouse = { married: true, dual: false, wage: 0 }; L.marriedAge = L.age; L.sanity += 8; }),
         opt('single', '🧭 비혼 + 자기투자 (대학원·해외경험)', '자기계발비 -1,500만 / 소득 +8%', ['experience', 'education'], L => { L.cash -= 1500; L.incomeMult *= 1.08; })
       ]
     },
     family35: {
       short: '35세 자녀', title: '35세 가족계획: 아이를 낳을까?', kind: 'milestone', cond: L => L.spouse.married,
-      desc: () => '자녀 양육비는 0~21세 연 1,000만 원으로 가정합니다. 태아·어린이보험은 자녀 1명당 월 6만 원(가상)입니다.',
+      desc: () => '양육비: 영유아 연 1,000만 → 초등 1,100만 → 중고등 1,300만 + 사교육비 + 대학 등록금(연 700만), 부모급여(0세 월 100만·1세 월 50만)·아동수당(월 10만) 지원. 태아·어린이보험은 자녀 1명당 월 6만 원(가상)입니다.',
       options: L => [
         opt('two', '👶👶 자녀 2명 + 태아·어린이보험', '양육비 큼 / 자녀 질병 시 보험 보장', ['family', 'safety'], L => { L.kids.push({ n: '첫째', birthAge: L.age }, { n: '둘째', birthAge: L.age + 2 }); L.childIns = true; L.sanity += 6; }),
         opt('oneIns', '👶 자녀 1명 + 태아·어린이보험', '양육 부담 중간 / 자녀 보장 있음', ['family', 'safety'], L => { L.kids.push({ n: '첫째', birthAge: L.age }); L.childIns = true; L.sanity += 4; }),
@@ -1370,7 +1690,7 @@ const KL = (function () {
         opt('stay', '🌿 지금 규모 유지 + 건강 관리', '건강 +5, 행복도 +5', ['health', 'family'], L => { L.hp = Math.min(100, L.hp + 5); L.sanity += 5; })
       ] : [
         opt('promote', '🏢 관리직 승진 도전', '소득 +18% / 스트레스로 건강 -3', ['career'], L => { L.incomeMult *= 1.18; L.hp -= 3; }),
-        opt('startup', '🏪 퇴사 후 자영업 창업', '창업자금 -5,000만 / 고변동 소득 / 유급병가 없음', ['wealth', 'career'], L => { L.cash -= 5000; Object.assign(L, { career: 'self', jobLabel: '자영업자', wage: Math.max(3000, L.lastEarned * 1.05), level: 1, jobClass: 2, workUntil: 65 }); }, null, L.cash < 3000 ? { disabled: true, reason: '창업자금 부족 (현금 3,000만 이상 필요)' } : null),
+        opt('startup', '🏪 퇴사 후 자영업 창업', '창업자금 -5,000만 / 고변동 소득(자영업 평균 사업소득 연 1,938만) / 국민연금·건보 전액 부담', ['wealth', 'career'], L => { L.cash -= 5000; Object.assign(L, { career: 'self', jobLabel: '자영업자', wage: Math.max(2400, L.lastEarned * 0.6 / L.incomeMult), level: 1, jobClass: 2, workUntil: 65 }); }, null, L.cash < 3000 ? { disabled: true, reason: '창업자금 부족 (현금 3,000만 이상 필요)' } : null),
         opt('reskill', '🔄 재교육 후 직업 전환 (IT·데이터·돌봄)', '교육비 -800만, 2년간 소득 -20% → 이후 +12%', ['education', 'career'], L => { L.cash -= 800; L.cuts.push({ mult: 0.8, until: L.age + 2 }); L.incomeMult *= 1.12; L.jobClass = 1; }),
         opt('stay', '🌿 워라밸 유지 + 건강 관리', '건강 +5, 행복도 +6', ['health', 'family'], L => { L.hp = Math.min(100, L.hp + 5); L.sanity += 6; })
       ]
@@ -1381,7 +1701,7 @@ const KL = (function () {
       options: L => {
         const o = [];
         const young = L.kids.filter(k => { const ka = kidAge(L, k); return ka >= 10 && ka <= 18; });
-        if (young.length) o.push(opt('eduAbroad', '✈️ 자녀 유학·입시 집중 지원', '자녀 1명당 4년간 연 2,500만 / 자녀 독립 성공률 상승', ['education', 'family'], L => { young.forEach(k => { k.abroad = true; k.abroadUntil = L.age + 4; }); }));
+        if (young.length && L.cash > 2500 * young.length * 2) o.push(opt('eduAbroad', '✈️ 자녀 유학·입시 집중 지원', '자녀 1명당 4년간 연 2,500만 / 자녀 독립 성공률 상승', ['education', 'family'], L => { young.forEach(k => { k.abroad = true; k.abroadUntil = L.age + 4; }); }));
         if (Object.keys(L.ins).length) o.push(opt('keepIns', '🛡️ 보장 유지 + 정밀검진 루틴', '검진비 -100만 / 건강 +6', ['health', 'safety'], L => { L.cash -= 100; L.hp = Math.min(100, L.hp + 6); L.lastCheckup = L.age; }, L => { }));
         if (L.ins.cancer || L.ins.brainHeart || L.ins.care) o.push(opt('cancelIns', '✂️ 진단비 해지 → 해지환급금으로 생활비', '해지환급금 +1,200만(가상) / 이후 중증질환은 무방비', ['wealth'], null, L => { setIns(L, L.ins.silson ? ['silson'] : [], '진단비 해지'); L.cash += 1200; }));
         o.push(opt('invest50', '📈 은퇴 전 마지막 투자 비중 확대', '주식 비중 확대 (변동성 큼)', ['wealth'], null, L => { L.invest = 'aggressive'; }));
@@ -1423,7 +1743,7 @@ const KL = (function () {
     },
     gift31: {
       short: '31세 부모 증여', title: '돌발 기로: 부모님이 목돈을 증여해 주셨습니다', kind: 'interrupt', fin: true,
-      desc: L => { const g = giftCalc(L); return `부모님이 ${fm(g.amt)}을 증여해 주셨습니다. 성년 자녀 증여재산공제 10년 5,000만 원${L.spouse.married ? ' + 혼인 증여공제 1억 원' : ''}을 넘는 금액에는 증여세(10% 구간 가정)가 붙어 실수령 ${fm(g.net)}입니다. 이 돈을 어떻게 쓸까요?`; },
+      desc: L => { const g = giftCalc(L); return `부모님이 ${fm(g.amt)}을 증여해 주셨습니다. 성년 자녀 증여재산공제 10년 5,000만 원${L.spouse.married ? ' + 혼인 증여공제 1억 원' : ''}을 넘는 금액에 증여세(1억 이하 10%·5억 이하 20%, 신고세액공제 3%) ${fm(g.tax)}가 붙어 실수령 ${fm(g.net)}입니다. 10년 안에 부모님이 돌아가시면 상속재산에 다시 합산됩니다. 이 돈을 어떻게 쓸까요?`; },
       options: L => {
         const g = giftCalc(L);
         const take = L2 => { L2.cash += g.net; L2.ledger.giftRecv += g.net; L2.ledger.giftTax += g.tax; };
@@ -1465,6 +1785,142 @@ const KL = (function () {
         ];
       }
     },
+    // ===== v4 추가 기로 =====
+    teen16: {
+      short: '16세 10대의 선택', title: '16세: 방과 후 시간을 어디에 쓸까?', kind: 'milestone', cond: L => L.playerAge === '10대',
+      desc: () => '10대의 가장 큰 위험은 질병보다 사고입니다. 청소년 교통사고 사상자의 상당수가 이륜차(오토바이·킥보드)에서 나옵니다.',
+      options: L => [
+        opt('bike', '🛵 배달 오토바이 아르바이트', '용돈 +1,000만 / 20세까지 교통사고 위험 3배', ['wealth', 'experience'], L => { L.cash += 1000; L.flags.bike = true; }),
+        opt('sport', '⚽ 운동부·익스트림 스포츠', '건강 +6 / 운동 중 부상 위험 2배', ['health', 'experience'], L => { L.hp = Math.min(100, L.hp + 6); L.flags.sport = true; }),
+        opt('study', '📖 학원·독서실', '초봉 +5% / 건강 -2', ['education'], L => { L.eduBoost *= 1.05; L.hp -= 2; }),
+        opt('game', '🎮 게임·e스포츠 몰입', '행복도 +5 / 건강 -3', ['experience'], L => { L.sanity += 5; L.hp -= 3; })
+      ]
+    },
+    invest25: {
+      short: '25세 첫 목돈', title: '25세 자산 증식 갈등: 첫 목돈을 어떻게 할까?', kind: 'milestone', cond: L => L.playerAge === '20대' && L.cash > 300,
+      desc: L => `보유 현금 ${fm(L.cash)}. 주변에서 코인·테마주로 돈을 벌었다는 이야기가 들립니다. 20대의 자산 차이는 '얼마나 벌었나'보다 '얼마나 잃지 않았나'에서 벌어집니다.`,
+      options: L => [
+        opt('coin', '🎰 코인·테마주에 절반 몰빵', `현금 절반(${fm(Math.max(300, L.cash * 0.5))}) 투자 — 2.5배(20%) / 70% 손실(35%) / 20% 손실(45%)`, ['wealth', 'experience'], L => {
+          const amt = R(Math.max(300, L.cash * 0.5)), v = L.ys[L.age][Y.coin], m = v < 0.2 ? 2.5 : v < 0.55 ? 0.3 : 0.8;
+          L.cash += R(amt * (m - 1)); L.ledger.selfLoss += R(amt * Math.max(0, 1 - m));
+          log(L, L.age, 'finance', m > 1 ? `🚀 코인 대박: ${fm(amt)} → ${fm(amt * m)}` : `📉 코인·테마주 손실: ${fm(amt)} → ${fm(amt * m)}`, true); L.sanity += m > 1 ? 8 : -8;
+        }),
+        opt('car', '🚗 신차 할부 구매', '5년 할부 연 700만 + 유지비 연 300만 / 행복도 +6', ['experience'], L => { L.car = { until: L.age + 5 }; L.sanity += 6; }),
+        opt('save', '🏦 청년미래적금 + 연금저축 시작', '정부기여금·세액공제 / 안정 자산', ['wealth', 'safety'], null, L => { if (!L.acc.youth && FIN.youth.cond(L)) L.acc.youth = { bal: 0, gov: 0, monthly: 50, start: L.age, paid: 0 }; if (!L.acc.pension) L.acc.pension = { bal: 0, monthly: 20, start: L.age, paid: 0, payout: false }; }),
+        opt('travel', '✈️ 여행·자기계발에 투자', '현금 -600만 / 행복도 +8, 소득 +2%', ['experience', 'education'], L => { L.cash -= 600; L.sanity += 8; L.incomeMult *= 1.02; })
+      ]
+    },
+    pension26: {
+      short: '26세 퇴직연금', title: '26세 퇴직연금·연금 가입: 노후 돈을 어떻게 굴릴까?', kind: 'milestone', fin: true, cond: L => L.career !== 'child' && !L.retired && L.age >= L.startAge,
+      desc: L => ['office', 'tech'].includes(L.career) ? '회사가 매년 월급 1개월치를 퇴직연금으로 적립합니다. DB형은 퇴직 직전 임금 기준, DC형은 내가 고른 상품 수익률에 따라 달라집니다.' : L.career === 'civil' ? '공무원은 공무원연금에 자동 가입됩니다. 추가로 개인연금을 준비할지 정합니다.' : '자영업·프리랜서는 퇴직금이 없습니다. 노후 준비를 스스로 해야 합니다.',
+      options: L => ['office', 'tech'].includes(L.career) ? [
+        opt('db', '🏢 DB형 (확정급여형)', '퇴직 직전 임금 × 근속연수 — 임금이 꾸준히 오르면 유리, 임금피크에 불리', ['safety'], L => { L.retPlan = 'db'; }),
+        opt('dcTdf', '📊 DC형 + TDF 펀드', '채권혼합·TDF 수익률(실질 연 약 2.8%) / 변동성 있음', ['wealth'], L => { L.retPlan = 'dcTdf'; }),
+        opt('dcSafe', '🏦 DC형 + 원리금보장 (예금)', '원금 보장 / 실질 수익 거의 0', ['safety'], L => { L.retPlan = 'dcSafe'; }),
+        opt('dcPlus', '🧾 DC형 TDF + 연금저축 월 30만 추가', '세액공제 13.2~16.5% / 55세 전 해지 시 기타소득세', ['wealth', 'safety'], L => { L.retPlan = 'dcTdf'; }, L => { if (!L.acc.pension) L.acc.pension = { bal: 0, monthly: 30, start: L.age, paid: 0, payout: false }; else L.acc.pension.monthly = Math.max(L.acc.pension.monthly, 30); })
+      ] : [
+        opt('pensionSave', L.career === 'civil' ? '🧾 공무원연금 + 연금저축 월 30만' : '🧾 연금저축 월 30만 (노란우산공제 대용)', '세액공제 / 노후 전용 자금', ['safety', 'wealth'], null, L => { if (!L.acc.pension) L.acc.pension = { bal: 0, monthly: 30, start: L.age, paid: 0, payout: false }; }),
+        opt('none', L.career === 'civil' ? '🏛️ 공무원연금만으로 충분' : '💼 지금은 사업·생활에 집중', '노후 준비는 나중에', ['experience'], L => { })
+      ]
+    },
+    tempt27: {
+      short: '27세 유혹', title: '27세: "확실한 수익" 제안을 받았습니다', kind: 'milestone', cond: L => L.playerAge === '20대' || (L.tier.tier >= 4 && L.ys[27][Y.tempt] < 0.3),
+      desc: L => `지인이 '리딩방·비상장 코인 프로젝트'를 소개합니다. ${L.tier.tier >= 3 ? '부모님 지원금이 있어 여유가 있다는 걸 알고 있습니다. ' : ''}가정환경이 좋아도 이런 스스로의 선택으로 자산이 줄어드는 경우가 많습니다. 현재 현금 ${fm(L.cash)}.`,
+      options: L => [
+        opt('scam', '💸 고수익 프로젝트에 투자', `${fm(Math.max(1000, L.cash * 0.4))} 투자 — 80% 손실 위험(85%)`, ['wealth'], L => {
+          const amt = R(Math.max(1000, L.cash * 0.4)), win = L.ys[L.age][Y.tempt] > 0.85;
+          const d = win ? R(amt * 0.5) : -R(amt * 0.8); L.cash += d; if (d < 0) L.ledger.selfLoss -= d;
+          log(L, L.age, 'finance', win ? `🎲 운 좋게 수익 ${fm(d)}` : `🕳️ 투자 사기·폭락으로 ${fm(-d)} 손실`, true); L.sanity += win ? 4 : -12;
+        }),
+        opt('luxury', '🛍️ 수입차 리스·명품으로 보상 소비', '현금 -2,000만 / 행복도 +6', ['experience'], L => { L.cash -= 2000; L.ledger.selfLoss += 2000; L.sanity += 6; }),
+        opt('refuse', '🙅 거절하고 적립식 투자 유지', '자산 보존', ['safety', 'wealth'], L => { })
+      ]
+    },
+    job30: {
+      short: '30세 이직 갈등', title: '30세 커리어 갈등: 이대로 버틸까, 옮길까?', kind: 'milestone', cond: L => L.playerAge === '30대' && !L.retired && L.career !== 'child' && L.age >= L.startAge,
+      desc: L => `현재 ${L.jobLabel}${L.firmLabel ? '(' + L.firmLabel + ')' : ''}, 연소득 ${fm(L.lastEarned)}. 30대는 이직·결혼·주거가 한꺼번에 몰리는 시기입니다.`,
+      options: L => [
+        opt('move', '🚪 연봉 15% 높은 곳으로 이직', '25% 확률로 회사 구조조정(1년 소득 -50%)', ['career', 'wealth'], L => { L.incomeMult *= 1.15; if (L.ys[L.age][Y.job] < 0.25) { L.cuts.push({ mult: 0.5, until: L.age + 1 }); log(L, L.age, 'finance', '📉 옮긴 회사가 구조조정 — 1년간 소득 반토막', true); } }),
+        opt('stay', '🪑 버티면서 승진 대기', '소득 +5% / 행복도 -4', ['safety', 'career'], L => { L.incomeMult *= 1.05; L.sanity -= 4; }),
+        opt('gap', '🌴 퇴사 후 1년 쉬며 여행', '1년 소득 0 + 여행비 -500만 / 행복도 +12', ['experience'], L => { L.cuts.push({ mult: 0, until: L.age + 1 }); L.cash -= 500; L.sanity += 12; }),
+        opt('license', '🎓 야간대학원·자격증', '비용 -1,500만 / 소득 +10%', ['education', 'career'], L => { L.cash -= 1500; L.incomeMult *= 1.1; })
+      ]
+    },
+    wed32: {
+      short: '32세 결혼식', title: '32세 결혼 준비: 결혼식·혼수에 얼마를 쓸까?', kind: 'milestone', cond: L => L.spouse.married && L.marriedAge === L.age,
+      desc: L => `2026년 평균 결혼비용은 신혼집을 빼고도 약 4,360만~5,810만 원(예식·스드메·예물·혼수·신혼여행)입니다. 아래 금액은 축의금 회수 후 본인 부담분 가정입니다.${L.tier.tier >= 3 ? ' 부모님이 일부 지원할 수 있습니다.' : ''}`,
+      options: L => {
+        const o = [
+          opt('small', '💐 스몰웨딩·실속 혼수', '본인 부담 -1,200만', ['wealth', 'safety'], L => { L.cash -= 1200; L.ledger.wedding += 1200; L.sanity += 2; }),
+          opt('standard', '💒 일반 예식장 + 혼수·신혼여행', '본인 부담 -3,000만', ['family'], L => { L.cash -= 3000; L.ledger.wedding += 3000; L.sanity += 5; }),
+          opt('lavish', '🏨 호텔 예식·예물·해외 신혼여행', '본인 부담 -6,000만 / 행복도 +8', ['experience', 'family'], L => { L.cash -= 6000; L.ledger.wedding += 6000; L.sanity += 8; })
+        ];
+        if (L.tier.tier >= 3) o.push(opt('parent', '🙏 부모님 지원으로 일반 예식', '본인 부담 -1,000만 / 부모님 노후자금 감소(상속재산 ↓)', ['family'], L => { L.cash -= 1000; L.ledger.wedding += 1000; L.flags.parentPaidWedding = true; L.sanity += 5; }));
+        return o;
+      }
+    },
+    kid_edu: {
+      short: '자녀 사교육', title: '자녀 초등학교 입학: 사교육을 얼마나 시킬까?', kind: 'interrupt',
+      desc: () => '2025 사교육비조사: 사교육 참여율 75.7%, 참여 학생 1인당 월평균 60.4만 원(초등 약 50만 · 고등 약 77만). 노후 준비와 정면으로 부딪히는 지출입니다.',
+      options: L => [
+        opt('high', '📚 학원 올인 (월 100만 이상)', '자녀 독립 성공률 +8%p / 노후자금 감소', ['education', 'family'], L => { L.kidEdu = 1.7; }),
+        opt('avg', '✏️ 평균 수준 (참여학생 평균)', '초등 연 600만 → 고등 연 920만', ['education'], L => { L.kidEdu = 1; }),
+        opt('low', '🏫 방과후·EBS 위주 (월 15만)', '교육비 75% 절감 / 독립 성공률 -4%p', ['wealth'], L => { L.kidEdu = 0.25; })
+      ]
+    },
+    checkup40: {
+      short: '40세 건강검진', title: '40세 건강검진 계획: 어디까지 검사할까?', kind: 'milestone',
+      desc: () => '40대부터 위·대장·유방암 등 검진 대상이 늘어납니다. 국가검진은 무료지만 범위가 제한되고, 정밀검진(내시경·CT)은 비급여입니다. 조기 발견 시 치료비·생존율이 크게 달라집니다.',
+      options: L => [
+        opt('precise', '🔬 2년마다 정밀검진 (회당 60만)', '조기 발견 효과 확실 / 비용 발생', ['health', 'safety'], L => { L.checkPlan = 'precise'; }),
+        opt('national', '🏥 국가건강검진만 (무료)', '조기 발견 효과 절반', ['health', 'wealth'], L => { L.checkPlan = 'national'; }),
+        opt('skip', '⏭️ 바빠서 미룬다', '비용 0 / 발견이 늦어질 수 있음', ['experience'], L => { L.checkPlan = ''; })
+      ]
+    },
+    pension45: {
+      short: '45세 노후 점검', title: '45세 노후자금 점검: 지금 무엇을 더 할까?', kind: 'milestone', fin: true, cond: L => !L.retired && L.career !== 'child',
+      desc: L => { const need = L.spouse.married ? 3560 : 2300, est = R(((3700 + (L.np.years ? L.np.sum / L.np.years : 0)) / 2) * 0.43 * Math.min(1, (L.np.years + 15) / 40)); return `노후 적정생활비는 부부 월 약 297만·1인 월 약 192만(국민노후보장패널)입니다. 예상 국민연금 연 약 ${fm(est)} vs 필요 연 ${fm(need)}. 퇴직연금 적립금 ${fm(L.retireFund)}, 연금계좌 ${fm(accBal(L))}.`; },
+      options: L => {
+        const o = [
+          opt('boost', '🧾 연금저축·IRP 월 50만으로 증액', '세액공제 최대 / 55세 이후 연금 수령', ['safety', 'wealth'], null, L => { if (!L.acc.pension) L.acc.pension = { bal: 0, monthly: 50, start: L.age, paid: 0, payout: false }; else L.acc.pension.monthly = Math.max(50, L.acc.pension.monthly); }),
+          opt('fund', '📊 ISA로 적립식 펀드(TDF) 연 600만', '중위험 분산투자 / 3년마다 연금계좌 이전 가능', ['wealth'], null, L => { if (!L.acc.isa) L.acc.isa = { bal: 0, annual: 600, start: L.age, paid: 0, gain: 0 }; if (INVEST[L.invest].risk < 3) L.invest = 'balanced'; })
+        ];
+        if (L.kids.some(k => kidAge(L, k) >= 0 && kidAge(L, k) <= 22)) o.push(opt('kidsFirst', '🎓 자녀 교육·결혼 자금이 먼저', '노후 준비 보류 / 자녀 독립 성공률 +5%p / 60세에 자녀 결혼 지원 3,000만', ['family', 'education'], L => { L.flags.kidsFirst = true; }));
+        if (L.house && L.house.loan > 3000) o.push(opt('payDebt', '🏠 주택담보대출 조기 상환', `현금의 60% 상환 / 이자 4.2% 절감`, ['safety'], L => { const p = Math.min(L.house.loan, Math.max(0, R(L.cash * 0.6))); L.house.loan -= p; L.cash -= p; }));
+        o.push(opt('none', '🤷 지금처럼 유지', '변화 없음', ['experience'], L => { }));
+        return o;
+      }
+    },
+    retire58: {
+      short: '58세 퇴직금', title: '58세 퇴직금 수령 방식: 연금으로 받을까, 한 번에 받을까?', kind: 'milestone', fin: true, cond: L => L.retireFund > 1000 && !L.retired,
+      desc: L => { const f = L.retireFund, r = retTaxRate(f); return `예상 퇴직금 ${fm(f)}. 일시금으로 받으면 퇴직소득세 약 ${fm(f * r)}, IRP에 넣어 10년 넘게 연금으로 받으면 퇴직소득세가 40% 줄어 약 ${fm(f * r * 0.6)}입니다.`; },
+      options: L => {
+        const o = [
+          opt('irpAnnuity', '💳 IRP 이전 → 20년 연금 수령', '퇴직소득세 40% 감면 / 매년 나눠 받음', ['safety'], L => { L.retChoice = 'irpAnnuity'; }),
+          opt('lump', '💰 일시금 수령', '목돈 확보 / 퇴직소득세 전액', ['wealth', 'experience'], L => { L.retChoice = 'lump'; })
+        ];
+        if (L.house && L.house.loan > 0) o.splice(1, 0, opt('payLoan', '🏠 일시금으로 주택담보대출 상환', '이자 부담 제거 / 퇴직소득세 전액', ['safety', 'family'], L => { L.retChoice = 'payLoan'; }));
+        return o;
+      }
+    },
+    dz_disc: careDec('dz_disc', '허리디스크', '🦴 허리디스크(추간판탈출증) 진단: 어떻게 치료할까?', '허리디스크는 진료인원이 가장 많은 근골격계 질환입니다. 비급여 도수치료·주사는 실손보험 청구 1위 항목이지만, 4세대 실손은 비급여 보장이 제한적입니다.', [
+      ['adv', '💆 비급여 도수치료·신경주사 + 비수술 시술', { gross: 700, nonCov: 450, nhisRate: 0.7, wk: 3 }, '회복 빠름', L => { L.hp -= 2; }],
+      ['std', '🩺 급여 물리치료·약물 (보존치료)', { gross: 220, nonCov: 30, nhisRate: 0.7, wk: 6 }, '회복 더딤 / 건강 -5', L => { L.hp -= 5; }]
+    ]),
+    dz_mental: careDec('dz_mental', '우울증·번아웃', '🧠 우울증·번아웃 진단: 어떻게 할까?', '우울증 진료인원은 연 100만 명을 넘습니다. 일을 줄이거나 쉬면 소득이 줄고, 참으면 생산성과 건강이 떨어집니다. 정신과 급여 치료는 실손 보상 대상, 심리상담은 대부분 비급여입니다.', [
+      ['adv', '🧠 정신건강의학과 + 비급여 심리상담 (주 1회)', { gross: 320, nonCov: 190, nhisRate: 0.7, wk: 0 }, '행복도 +15 / 1년 소득 -10%', L => { L.sanity += 15; if (!L.retired) L.cuts.push({ mult: 0.9, until: L.age + 1 }); }],
+      ['std', '💊 약물치료만 (급여)', { gross: 120, nonCov: 10, nhisRate: 0.7, wk: 0 }, '행복도 +8 / 1년 소득 -15%', L => { L.sanity += 8; if (!L.retired) L.cuts.push({ mult: 0.85, until: L.age + 1 }); }],
+      ['skip', '😶 참고 버틴다', { gross: 0, nonCov: 0, nhisRate: 0.7, wk: 0 }, '행복도 -10 / 2년간 소득 -20% / 건강 -3', L => { L.sanity -= 10; L.hp -= 3; if (!L.retired) L.cuts.push({ mult: 0.8, until: L.age + 2 }); }]
+    ]),
+    dz_eye: careDec('dz_eye', '백내장', '👁️ 백내장 진단: 어떤 렌즈로 수술할까?', '백내장은 60세 이상 수술 1위입니다. 단초점 렌즈는 건강보험 급여, 다초점 렌즈는 비급여(양안 수백만 원)로 실손 분쟁이 잦은 항목입니다.', [
+      ['adv', '👓 다초점 인공수정체 (비급여)', { gross: 700, nonCov: 600, nhisRate: 0.8, wk: 1 }, '안경 없이 생활 / 행복도 +5', L => { L.sanity += 5; }],
+      ['std', '🩺 단초점 렌즈 (급여)', { gross: 200, nonCov: 20, nhisRate: 0.8, wk: 1 }, '돋보기 필요', L => { }]
+    ]),
+    dz_knee: careDec('dz_knee', '퇴행성 관절염', '🦵 무릎 퇴행성 관절염 말기: 인공관절 수술을 할까?', '65세 이상에서 흔한 수술입니다. 수술 후 재활·간병 기간이 필요하고, 간병비는 실손보험이 보상하지 않습니다.', [
+      ['adv', '🦿 로봇 인공관절 + 1인실·간병인', { gross: 1600, nonCov: 450, careCost: 300, nhisRate: 0.8, wk: 8 }, '건강 +4 / 행복도 +6', L => { L.hp = Math.min(100, L.hp + 4); L.sanity += 6; }],
+      ['std', '🩺 급여 인공관절 수술 (다인실)', { gross: 1200, nonCov: 150, nhisRate: 0.8, wk: 10 }, '건강 +1', L => { L.hp = Math.min(100, L.hp + 1); }],
+      ['skip', '⏳ 수술 미루고 진통제·주사로 버틴다', { gross: 80, nonCov: 30, nhisRate: 0.7, wk: 0 }, '건강 -6 / 행복도 -5', L => { L.hp -= 6; L.sanity -= 5; }]
+    ]),
     treat_cancer: { short: '암 치료 선택', title: '🚨 암 진단: 치료 방법을 선택하세요', kind: 'treat', treat: 'cancer' },
     treat_bh: { short: '뇌·심장 치료 선택', title: '🚨 급성 심근경색·뇌졸중: 치료 방법을 선택하세요', kind: 'treat', treat: 'bh' }
   };
@@ -1472,7 +1928,7 @@ const KL = (function () {
   function giftCalc(L) {
     const amt = [0, 0, 3000, 7000, 15000][L.tier.tier - 1];
     const ded = 5000 + (L.spouse.married ? 10000 : 0);
-    const tax = R(Math.max(0, amt - ded) * 0.1);
+    const tax = transferTax(amt - ded);
     return { amt, tax, net: amt - tax };
   }
   function kidTreat(L, idx, mode) {
@@ -1494,7 +1950,8 @@ const KL = (function () {
     const broke = L.cash < -3000 && L.credit < 600 && avail < std.net;
     const early = cat === 'cancer' && L.age - L.lastCheckup <= 2;
     const ev0 = severeEv(L, cat, 'adv');
-    const desc = `${cat === 'cancer' ? (early ? '최근 건강검진 덕분에 조기에 발견했습니다. ' : '') + '산정특례로 급여 본인부담은 5%입니다.' + (L.cancerNewDrug ? ' 주치의가 급여 기준에 맞지 않는 면역항암제를 권했습니다(비급여 약값 연 약 6,600만 원).' : '') : '골든타임이 중요합니다. 산정특례가 적용됩니다.'} 간병비는 실손보험이 보상하지 않습니다.`
+    const T = cat === 'cancer' ? CANCER_T[L.cancerType || 'other'] : null;
+    const desc = `${cat === 'cancer' ? `${T.label} 진단 (5년 상대생존율 ${Math.min(100, R(T.s * 100))}%, 국가암등록통계). ` + (T.minor ? '갑상선암은 대부분의 암보험에서 "유사암"으로 분류돼 진단비의 20%만 지급됩니다. ' : '') + (early ? '최근 건강검진 덕분에 조기에 발견했습니다. ' : '') + '산정특례로 급여 본인부담은 5%입니다.' + (L.cancerNewDrug ? ' 주치의가 급여 기준에 맞지 않는 면역항암제를 권했습니다(비급여 약값 연 약 6,600만 원).' : '') : '골든타임이 중요합니다. 산정특례가 적용됩니다.'} 간병비는 실손보험이 보상하지 않습니다.`
       + ` 보유 현금 ${fm(L.cash)}, 대출 가능 ${fm(loanLim)}${houseEq ? ', 집 처분 시 ' + fm(houseEq) : ''}. 휴직 소득 공백 약 ${fm(ev0.loss)}.`;
     const options = broke ? [
       opt('delay', '⏳ 치료비를 마련하지 못해 치료가 늦어짐', '자산·신용 부족으로 적극 치료 불가 — 생존율 하락', ['wealth'], L => applySevere(L, cat, 'std', true))
@@ -1502,7 +1959,7 @@ const KL = (function () {
       opt('adv', cat === 'cancer' ? (L.cancerNewDrug ? '💊 급여 기준 밖 면역항암제(비급여) 투여' : '🏥 상급종합병원 1인실 + 간병인') : '🚑 상급병원 집중치료 + 재활 + 간병인', `실제 부담 약 ${fm(adv.net)} (보험금 ${fm(adv.silson + adv.fixed)} 반영) / 생존·회복 가능성 ↑`, ['health'], L => applySevere(L, cat, 'adv', false), null, adv.net > avail ? { disabled: true, reason: `치료비 부족: 필요 ${fm(adv.net)} > 마련 가능 ${fm(avail)}` } : null),
       opt('std', '🩺 건강보험 급여 표준치료', `실제 부담 약 ${fm(std.net)} / 비용 부담 ↓, 회복 더딤`, ['wealth'], L => applySevere(L, cat, 'std', false))
     ];
-    return { key, kind: 'treat', short: DEC[key].short, title: DEC[key].title, desc, options, ctx: { cat, needAdv: adv.net, needStd: std.net, avail, advDisabled: adv.net > avail } };
+    return { key, kind: 'treat', short: DEC[key].short, title: T ? `🚨 ${T.label} 진단: 치료 방법을 선택하세요` : DEC[key].title, desc, options, ctx: { cat, needAdv: adv.net, needStd: std.net, avail, advDisabled: adv.net > avail } };
   }
 
   function applySevere(L, cat, mode, delay) {
@@ -1514,10 +1971,11 @@ const KL = (function () {
     medApply(L, ev);
     if (L.cash < 0) L.credit = Math.max(300, L.credit - 40);
     if (cat === 'cancer') {
-      let p = clamp(0.16 + 0.006 * (a - 50), 0.06, 0.6) * (mode === 'adv' ? (L.cancerNewDrug ? 0.7 : 0.92) : (L.cancerNewDrug ? 1.15 : 1)) * (ev.early ? 0.6 : 1) * (delay ? 1.6 : 1) * (L.hp < 40 ? 1.3 : 1);
-      L.hp -= R((mode === 'adv' ? 10 : 18) * (ev.early ? 0.7 : 1));
-      if (u[S.cancerSev] < p) L.pendingDeath = { age: a + 1 + Math.floor(u[S.deathDelay] * 3), cause: '암(악성신생물) 진행' };
-      else log(L, a, 'medical', '🎗️ 치료 후 관해 판정 — 정기 추적관찰 중', true);
+      const T = CANCER_T[L.cancerType || 'other'];
+      let p = clamp((1 - T.s) * clamp(0.75 + 0.012 * (a - 55), 0.5, 1.4), 0.002, 0.9) * (mode === 'adv' ? (L.cancerNewDrug ? 0.7 : 0.92) : (L.cancerNewDrug ? 1.15 : 1)) * (ev.early ? 0.6 : 1) * (delay ? 1.6 : 1) * (L.hp < 40 ? 1.3 : 1);
+      L.hp -= R((mode === 'adv' ? 10 : 18) * (ev.early ? 0.7 : 1) * (T.minor ? 0.3 : 1));
+      if (u[S.cancerSev] < p) L.pendingDeath = { age: a + 1 + Math.floor(u[S.deathDelay] * 3), cause: `${T.label} 진행` };
+      else log(L, a, 'medical', `🎗️ ${T.label} 치료 후 관해 판정 — 정기 추적관찰 중`, true);
     } else {
       const p = clamp(0.07 + 0.004 * (a - 50), 0.03, 0.35) * (mode === 'adv' ? 0.8 : 1) * (delay ? 1.5 : 1);
       L.hp -= mode === 'adv' ? 8 : 14;
@@ -1560,6 +2018,11 @@ const KL = (function () {
       if (L.cash >= spec.ctx.needAdv) return 'adv';
       return (L.persona === 'health' || L.persona === 'family') ? 'adv' : 'std';
     }
+    if (spec.kind === 'care') {
+      const has = id => avail.some(o => o.id === id);
+      const rich = L.cash > (L.persona === 'health' || L.persona === 'family' ? 1500 : 4000);
+      return rich && has('adv') ? 'adv' : has('std') ? 'std' : avail[0].id;
+    }
     const w = PERSONAS[L.persona] ? PERSONAS[L.persona].w : PERSONAS.stable.w;
     let best = null, bs = -1e9;
     avail.forEach(o => {
@@ -1585,20 +2048,23 @@ const KL = (function () {
   function replayPolicy(choices, strategy, rng) {
     const map = {};
     choices.forEach(c => { if (c.k === 'remodel' || c.k === 'finop') return; (map[c.k] = map[c.k] || []).push(c.o); });
+    const force = strategy && strategy.force || {};
     return (L, spec) => {
       if (spec.kind === 'treat') return treatRule(L, spec);
       const qq = map[spec.key];
+      if (force[spec.key] && spec.options.some(o => o.id === force[spec.key] && !o.disabled)) { if (qq && qq.length) qq.shift(); return force[spec.key]; }
       if (qq && qq.length) { const id = qq.shift(); if (spec.options.some(o => o.id === id && !o.disabled)) return id; }
       return autoPick(L, spec, rng);
     };
   }
   function runHeadless(seed, base, strategy, choices, actions, charOverride) {
-    const L = createLife(seed, Object.assign({ quiet: true, persona: base.persona, econ: base.econ, initPlan: base.initPlan }, charOverride || {}));
+    const L = createLife(seed, Object.assign({ quiet: true, persona: base.persona, econ: base.econ, initPlan: base.initPlan, playerAge: base.playerAge }, charOverride || {}));
     const rng = mulberry32((seed ^ 0xA5A5) >>> 0);
     L.strategy = strategy && strategy.ins ? strategy : null;
     L.policy = replayPolicy(choices, L.strategy, rng);
     const actByAge = {}, finByAge = {};
-    (actions || []).forEach(x => { if (x.t !== 'remodel') (actByAge[x.age] = actByAge[x.age] || []).push(x.t); });
+    if (strategy && strategy.habits) { for (let a = 19; a <= MAX_AGE; a++) actByAge[a] = a >= 30 && a % 2 === 0 ? ['exercise', 'checkup'] : ['exercise']; }
+    else (actions || []).forEach(x => { if (x.t !== 'remodel') (actByAge[x.age] = actByAge[x.age] || []).push(x.t); });
     if (!L.strategy) (choices || []).forEach(c => { if (c.k === 'finop') (finByAge[c.age] = finByAge[c.age] || []).push(c.o); });
     let guard = 0;
     while (L.alive && guard++ < 120) {
@@ -1617,20 +2083,39 @@ const KL = (function () {
       medBurden: Math.max(0, lg.oop - lg.silson - lg.support), premium: lg.premium, payout: lg.silson + lg.fixed + lg.termPayout,
       crisis: lg.crisis, downgrade: lg.downgrade, bankrupt: lg.bankrupt, lapses: lg.lapses, incomeLoss: lg.incomeLoss,
       peak: lg.peakNetWorth, invest: lg.investReturn, events: lg.events.length,
-      finContrib: lg.finContrib, finBenefit: lg.finTaxCredit + lg.finTaxSaved + lg.finGov, finFee: lg.finFee + lg.finSurrender, finReturn: lg.finReturn, accBal: accBal(L)
+      finContrib: lg.finContrib, finBenefit: lg.finTaxCredit + lg.finTaxSaved + lg.finGov, finFee: lg.finFee + lg.finSurrender, finReturn: lg.finReturn, accBal: accBal(L),
+      taxTotal: lg.incomeTax + lg.finTax + lg.propTax + lg.inheritTax + lg.giftTax + lg.retireTax + lg.estateTax, estateTax: lg.estateTax,
+      heirNet: L.alive ? netWorth(L) : lg.heirNet, spend: lg.living + lg.rent + lg.kidsCost + lg.wedding + lg.carCost
     };
   }
   function counterfactuals(L0) {
-    const base = { persona: L0.persona, econ: L0.econ, initPlan: L0.initPlan };
+    const base = { persona: L0.persona, econ: L0.econ, initPlan: L0.initPlan, playerAge: L0.playerAge };
     return STRATEGIES.map(st => {
       if (st.id === 'actual') return { st, r: summarize(L0) };
       const L = runHeadless(L0.seed, base, st, L0.choices, L0.actions, {});
       return { st, r: summarize(L) };
     });
   }
+  // 내가 한 선택 하나만 다른 선택지로 바꿔 같은 인생(같은 시드)을 다시 산다
+  function altChoices(L0, maxN) {
+    const base = { persona: L0.persona, econ: L0.econ, initPlan: L0.initPlan, playerAge: L0.playerAge };
+    const ref = summarize(runHeadless(L0.seed, base, null, L0.choices, L0.actions, {}));
+    const out = [];
+    L0.choices.forEach((c, i) => {
+      const d = DEC[c.k];
+      if (!d || !c.alts || c.alts.length < 2 || d.kind === 'poll' || d.kind === 'treat') return;
+      const alts = c.alts.filter(x => x[0] !== c.o).map(([id, label]) => {
+        const ch = L0.choices.map((x, j) => j === i ? Object.assign({}, x, { o: id }) : x);
+        const r = summarize(runHeadless(L0.seed, base, null, ch, L0.actions, {}));
+        return { id, label, r, dNW: r.netWorth - ref.netWorth, dHeir: r.heirNet - ref.heirNet, dAge: r.finalAge - ref.finalAge, dTax: r.taxTotal - ref.taxTotal };
+      });
+      out.push({ i, k: c.k, age: c.age, short: d.short, mine: c.l || c.o, src: c.src, alts });
+    });
+    return { ref, list: maxN ? out.slice(0, maxN) : out };
+  }
   function monteCarlo(L0, n) {
     n = n || 200;
-    const base = { persona: L0.persona, econ: L0.econ, initPlan: L0.initPlan };
+    const base = { persona: L0.persona, econ: L0.econ, initPlan: L0.initPlan, playerAge: L0.playerAge };
     const charO = { gender: L0.gender, tierIdx: L0.tier.tier - 1, dnaId: L0.dna.id, siblings: L0.siblings.length, fatherAge: L0.parents.f.age - L0.age, motherAge: L0.parents.m.age - L0.age };
     if (charO.fatherAge < 25) charO.fatherAge = 33; if (charO.motherAge < 25) charO.motherAge = 31;
     const out = {};
@@ -1649,7 +2134,7 @@ const KL = (function () {
       return {
         age: mean('finalAge'), med: q(0.5), p10: q(0.1), p90: q(0.9), premium: mean('premium'), payout: mean('payout'), medBurden: mean('medBurden'),
         crisis: rate(x => x.crisis > 0), downgrade: rate(x => x.downgrade > 0), bankrupt: rate(x => x.bankrupt > 0), reach85: rate(x => x.finalAge >= 85),
-        finBenefit: mean('finBenefit'), finFee: mean('finFee')
+        finBenefit: mean('finBenefit'), finFee: mean('finFee'), tax: mean('taxTotal'), heirMed: (() => { const h = arr.map(x => x.heirNet).sort((a, b) => a - b); return h[Math.floor(h.length / 2)]; })()
       };
     };
     const res = {}; STRATEGIES.forEach(st => res[st.id] = stat(out[st.id]));
@@ -1688,6 +2173,7 @@ const KL = (function () {
     }
   };
   const X = { bond1: 0, bond2: 1, risky: 2, gift: 3, newDrug: 4, spare: 5 };
+  const Y = { traffic: 0, sport: 1, disc: 2, depress: 3, dialysis: 4, pneumonia: 5, cataract: 6, knee: 7, liver: 8, shingles: 9, cType: 10, firm: 11, coin: 12, tempt: 13, job: 14, sev: 15, fault: 16, early: 17, spare: 18, extra: 19 };
 
   function marketZ(L, u) {
     const x = L.xs[Math.min(L.age, MAX_AGE)];
@@ -1701,12 +2187,12 @@ const KL = (function () {
   // 연간 계좌 처리: 운용수익 → 납입 → 세제혜택 → 만기·연금 수령
   function finYear(L, a, earned, z) {
     const A = L.acc, lg = L.ledger; let out = 0, inc = 0;
-    const working = earned > 0 && !L.retired;
+    const working = earned > 0 && !L.retired, canPay = working && L.cash > 0; // 현금이 바닥나면 납입 중단(가정)
     // 청년미래적금
     if (A.youth) {
       const y = A.youth;
       const g = y.bal * 0.015; y.bal += g; lg.finReturn += g; // 예금 + 우대금리 수준 (실질, 가정)
-      if (working && a - y.start < 3) {
+      if (canPay && a - y.start < 3) {
         const c = y.monthly * 12; out += c; y.bal += c; y.paid += c; lg.finContrib += c;
         const gv = R(c * (earned <= 3600 ? 0.12 : earned <= 6000 ? 0.06 : 0)); y.gov += gv;
       }
@@ -1720,7 +2206,7 @@ const KL = (function () {
     if (A.pension) {
       const p = A.pension;
       const r = mixRet(INVEST.balanced.w, z), g = p.bal * r; p.bal += g; lg.finReturn += g;
-      if (!p.payout && working) {
+      if (!p.payout && canPay) {
         const c = Math.min(p.monthly * 12, 1800); out += c; p.bal += c; p.paid += c; lg.finContrib += c;
         const cr = R(Math.min(c, 900) * (earned <= 5500 ? 0.165 : 0.132)); inc += cr; lg.finTaxCredit += cr;
       }
@@ -1828,15 +2314,16 @@ const KL = (function () {
   function autoFinance(L, rng) {
     if (L.age < 22 || L.lastEarned <= 0 || L.retired || L.pending) return;
     const p = L.persona, A = L.acc;
-    if (!A.youth && finCanOpen(L, 'youth') && (p === 'stable' || p === 'growth' || p === 'family') && rng() < 0.6) finOp(L, { t: 'open', p: 'youth', amt: 50 }, 'auto');
-    else if (!A.pension && L.age >= 27 && (p === 'stable' || p === 'family' || p === 'health') && rng() < 0.35) finOp(L, { t: 'open', p: 'pension', amt: 25 }, 'auto');
-    else if (!A.isa && L.age >= 27 && p === 'growth' && rng() < 0.3) finOp(L, { t: 'open', p: 'isa', amt: 600 }, 'auto');
+    const rec = PMOD[p] && PMOD[p].finRec; // 재테크 추천 인생관(성장·부자형, 건강 우선형)은 절세계좌를 더 적극적으로 연다
+    if (!A.youth && finCanOpen(L, 'youth') && (p === 'stable' || rec || p === 'family') && rng() < 0.6) finOp(L, { t: 'open', p: 'youth', amt: 50 }, 'auto');
+    else if (!A.pension && L.age >= 27 && (p === 'stable' || p === 'family' || rec) && rng() < (rec ? 0.5 : 0.3)) finOp(L, { t: 'open', p: 'pension', amt: rec ? 40 : 25 }, 'auto');
+    else if (!A.isa && L.age >= 27 && rec && L.cash > 1000 && rng() < 0.4) finOp(L, { t: 'open', p: 'isa', amt: 600 }, 'auto');
   }
 
   // ---------- 저장·복원 (시드 + 선택 기록 + 행동 기록을 그대로 재생 → 같은 인생이 정확히 재현됨) ----------
   function serialize(L) {
     return {
-      v: 3, seed: L.seed, opts: { persona: L.persona, econ: L.econ, initPlan: L.initPlan },
+      v: 4, seed: L.seed, opts: { persona: L.persona, econ: L.econ, initPlan: L.initPlan, playerAge: L.playerAge },
       age: L.age, alive: L.alive,
       choices: L.choices.map(c => ({ k: c.k, o: c.o, age: c.age, src: c.src, dt: c.dt || 0 })),
       actions: L.actions.map(x => ({ age: x.age, t: x.t }))
@@ -1868,6 +2355,7 @@ const KL = (function () {
   return {
     serialize, restore,
     S, MAX_AGE, TIERS, DNA, INS, SHOP_IDS, PERSONAS, TAGS, STRATEGIES, INVEST, RET, FIN, DEC, MILESTONES, MILESTONE_AGES,
+    PMOD, AGEG, CANCER_T, ESTATE, incomeTax, inheritTax, transferTax, altChoices,
     finOp, finCanOpen, surrenderValue, accBal, decodeOp, giftCalc, copayCap, medianIncome,
     createLife, step, resolve, doAction, remodel, autoPick, autoAction, treatRule, setIns, canBuy, buyReason, estMonthly,
     monthlyPremium, shield, netWorth, kidAge, insList, fm, counterfactuals, monteCarlo, runHeadless, summarize, medCalc,
@@ -2138,7 +2626,10 @@ function renderStart() {
   renderChips('genderChips', GENDERS, 'gender');
   $('personaCards').innerHTML = Object.entries(KL.PERSONAS).map(([k, p]) => `
     <button type="button" onclick="profileSel.persona='${k}';renderStart()" class="chip ${profileSel.persona === k ? 'on' : ''} p-2.5 rounded-xl text-left">
-      <div class="text-xs font-extrabold">${p.label}</div><div class="text-[11px] opacity-80">"${p.motto}"</div></button>`).join('');
+      <div class="text-xs font-extrabold">${p.label}</div><div class="text-[11px] opacity-80">"${p.motto}"</div><div class="text-[10px] text-amber-200/90 mt-0.5 leading-snug">${p.effect || ''}</div></button>`).join('');
+  const ag = KL.AGEG[profileSel.ageGroup];
+  $('ageFocusBox').classList.toggle('hidden', !ag);
+  if (ag) $('ageFocusBox').innerHTML = `🎯 <b>${profileSel.ageGroup} 맞춤 시나리오</b>: 게임 속 인생에서 <b>${ag.focus}</b> 사건이 더 자주 등장합니다. ${ag.info}`;
   $('modeChips').innerHTML = [[false, '🙋 직접 선택', '중대 기로마다 내가 결정'], [true, '🤖 자동 모드', '인생관대로 AI가 대신 선택']].map(([v, t, d]) => `
     <button type="button" onclick="profileSel.auto=${v};renderStart()" class="chip ${profileSel.auto === v ? 'on' : ''} p-2.5 rounded-xl text-left"><div class="text-xs font-extrabold">${t}</div><div class="text-[11px] opacity-80">${d}</div></button>`).join('');
 }
@@ -2392,7 +2883,7 @@ function startGachaLife() {
   setTimeout(() => {
     const seed = (Date.now() ^ Math.floor(Math.random() * 0xffffffff)) >>> 0;
     const econ = $('econModeSelect').value, plan = $('initPlanSelect').value;
-    L = KL.createLife(seed, { persona: profileSel.persona, econ, initPlan: plan });
+    L = KL.createLife(seed, { persona: profileSel.persona, econ, initPlan: plan, playerAge: KL.AGEG[profileSel.ageGroup] ? profileSel.ageGroup : '' });
     autoMode = profileSel.auto; reportShown = false;
     TRK.profile({ persona: profileSel.persona, auto: autoMode });
     TRK.startPlay(L, { persona: profileSel.persona, auto: autoMode, econ, plan });
@@ -2473,9 +2964,9 @@ function showDecision(spec) {
   TRK.setPending(spec.key);
   switchRightTab('live');
   $('milestoneAlertBanner').classList.remove('hidden');
-  $('alertBannerTitle').textContent = spec.kind === 'treat' ? '🚨 중증 질환 발생! 치료 방법을 정해야 합니다.' : spec.kind === 'interrupt' ? '⚡ 돌발 사건 발생! 시간이 멈췄습니다.' : '인생 중대 기로 도달! 시간이 멈췄습니다.';
+  $('alertBannerTitle').textContent = spec.kind === 'treat' ? '🚨 중증 질환 발생! 치료 방법을 정해야 합니다.' : spec.kind === 'care' ? '🩺 질병 진단! 치료 방법을 정해야 합니다.' : spec.kind === 'interrupt' ? '⚡ 돌발 사건 발생! 시간이 멈췄습니다.' : '인생 중대 기로 도달! 시간이 멈췄습니다.';
   const card = $('decisionCardBox'); card.classList.remove('hidden');
-  $('decisionAgeBadge').textContent = `${L.age}세 · ${spec.kind === 'poll' ? '관심사 체크' : spec.kind === 'treat' ? '치료 선택' : spec.kind === 'interrupt' ? '돌발 기로' : '중대 기로'}`;
+  $('decisionAgeBadge').textContent = `${L.age}세 · ${spec.kind === 'poll' ? '관심사 체크' : (spec.kind === 'treat' || spec.kind === 'care') ? '치료 선택' : spec.kind === 'interrupt' ? '돌발 기로' : '중대 기로'}`;
   $('decisionKindText').textContent = spec.kind === 'poll' ? '결과에 거의 영향 없음 · 통계용' : '결정 전까지 시간이 멈춥니다';
   $('decisionTitle').textContent = spec.title;
   $('decisionDesc').textContent = spec.desc;
@@ -2688,6 +3179,7 @@ function renderReport() {
   $('repLifeNarrative').textContent = narrative(s);
   $('repMedicalBreakdown').innerHTML =
     row('총 진료비 (급여+비급여, 배상 포함)', fm(lg.grossMed)) +
+    (lg.autoIns ? row('⓪ 상대 자동차보험이 보상 (교통사고 피해)', fm(lg.autoIns), 'text-cyan-300') : '') +
     row('① 국민건강보험 공단부담 (산정특례 포함)', fm(lg.nhis), 'text-cyan-300') +
     row('② 본인부담상한제 환급 (가상 단순화)', fm(lg.capRefund), 'text-cyan-300') +
     row('→ 환자 초기 지출 (법정본인부담+비급여)', fm(lg.oop), 'text-rose-300') +
@@ -2698,26 +3190,74 @@ function renderReport() {
     row('질병·사고로 끊긴 소득', fm(lg.incomeLoss), 'text-rose-300') +
     row('의료비 유동성 위기 / 돈 때문에 치료 하향', `${lg.crisis}회 / ${lg.downgrade}회`, lg.crisis || lg.downgrade ? 'text-rose-400' : 'text-emerald-300');
   $('repFinanceBreakdown').innerHTML =
-    row('평생 근로·사업소득 (본인)', fm(lg.earned)) +
-    (lg.spouseEarned ? row('배우자 소득', fm(lg.spouseEarned)) : '') +
     row('국민연금 낸 돈 → 받은 돈', `${fm(lg.npPaid)} → ${fm(lg.npRecv)}`, 'text-cyan-300') +
-    row('퇴직연금 / 기초연금 / 주택연금', `${fm(lg.retireRecv)} / ${fm(lg.basicPension)} / ${fm(lg.homePension)}`) +
+    row('퇴직금·퇴직연금 수령 (퇴직소득세 ' + fm(lg.retireTax) + ')', fm(lg.retireRecv), 'text-cyan-300') +
+    row('기초연금 / 주택연금', `${fm(lg.basicPension)} / ${fm(lg.homePension)}`) +
     row('민간보험료 납입 (본인)', fm(lg.premium), 'text-amber-300') +
     (lg.surrenderLoss ? row('보험 중도해지 손실', fm(lg.surrenderLoss), 'text-rose-400') : '') +
-    row('투자수익 누적 (' + KL.INVEST[L.invest].label + ' 등)', fm(lg.investReturn), lg.investReturn < 0 ? 'text-rose-400' : 'text-emerald-300') +
-    row('대출·주담대 이자', fm(lg.interest), 'text-rose-300') +
+    row('투자수익 누적 (' + KL.INVEST[L.invest].label + ' 등, 세후)', fm(lg.investReturn), lg.investReturn < 0 ? 'text-rose-400' : 'text-emerald-300') +
     row('💰 재테크 계좌 납입 합계', fm(lg.finContrib), 'text-cyan-300') +
     row('　세액공제·ISA 비과세·청년 기여금', fm(lg.finTaxCredit + lg.finTaxSaved + lg.finGov), 'text-emerald-300') +
     row('　변액 사업비·중도해지 손실', fm(lg.finFee + lg.finSurrender), 'text-rose-300') +
     row('　연금저축·변액연금 수령 / 남은 잔액', `${fm(lg.finPayout)} / ${fm(KL.accBal(L))}`) +
-    (lg.giftRecv ? row('부모님 증여 (증여세 ' + fm(lg.giftTax) + ')', fm(lg.giftRecv), 'text-emerald-300') : '') +
-    row('금융소득세 (이자·배당·연금)', fm(lg.finTax), 'text-rose-300') +
+    (lg.giftRecv ? row('부모님 증여 실수령 (증여세 ' + fm(lg.giftTax) + ')', fm(lg.giftRecv), 'text-emerald-300') : '') +
+    row('상속 받은 재산 (세전 ' + fm(lg.inheritGross) + ' · 상속세 ' + fm(lg.inheritTax) + ')', fm(lg.inheritance), 'text-emerald-300') +
     (lg.houseGain ? row('집값 변동', fm(lg.houseGain), lg.houseGain < 0 ? 'text-rose-400' : 'text-emerald-300') : '') +
-    row('상속 받은 재산', fm(lg.inheritance), 'text-emerald-300') +
-    row('가족에게 나간 돈 (간병·형제·배우자)', fm(lg.familyOut), 'text-rose-300') +
-    row('자녀 양육·교육비', fm(lg.kidsCost)) +
+    row('남긴 재산 → 상속세 → 유족 실수령', `${fm(s.netWorth)} → ${fm(lg.estateTax)} → ${fm(lg.heirNet)}`, lg.estateTax ? 'text-rose-300' : 'text-emerald-300') +
     (lg.termPayout ? row('정기사망보험금 (유족)', fm(lg.termPayout), 'text-amber-300') : '') +
     row('보험 실효 / 채무조정', `${lg.lapses}회 / ${lg.bankrupt ? '있음' : '없음'}`, lg.bankrupt ? 'text-rose-400' : '');
+  // 평생 소득 → 세금 → 지출
+  const yrsAdult = Math.max(1, s.finalAge - 18), wy = Math.max(1, lg.workYears);
+  const avgWage = lg.earned / wy;
+  const taxes = lg.incomeTax + lg.social + lg.npPaid + lg.healthRetiree + lg.propTax + lg.finTax + lg.retireTax + lg.giftTax + lg.inheritTax;
+  const home = lg.rent + lg.interest;
+  const kids = lg.kidsCost + lg.wedding;
+  const fam = lg.familyOut;
+  const medIns = lg.premium + Math.max(0, lg.oop - lg.silson - lg.support);
+  const etc = lg.carCost + lg.loanRepay + lg.selfLoss;
+  const income = lg.earned + lg.spouseEarned + lg.npRecv + lg.retireRecv + lg.basicPension + lg.homePension + lg.welfare + lg.childBenefit + lg.inheritance + lg.giftRecv;
+  const monthlySpend = (lg.living + lg.rent + lg.kidsCost + lg.carCost) / yrsAdult / 12;
+  const sec = t => `<div class="md:col-span-2 text-[11px] font-extrabold text-slate-300 pt-2">${t}</div>`;
+  $('repSpendBreakdown').innerHTML =
+    sec('① 들어온 돈 ' + fm(income)) +
+    row(`본인 근로·사업소득 (${wy}년, 평균 연 ${fm(avgWage)})`, fm(lg.earned)) +
+    row('　비교: 근로자 평균 연 4,500만·중위 3,417만 (국세청 2024)', avgWage >= 4500 ? '평균 이상' : avgWage >= 3417 ? '중위~평균' : '중위 미만', avgWage >= 3417 ? 'text-emerald-300' : 'text-amber-300') +
+    (lg.spouseEarned ? row('배우자 소득', fm(lg.spouseEarned)) : '') +
+    row('연금 수령 (국민·퇴직·기초·주택)', fm(lg.npRecv + lg.retireRecv + lg.basicPension + lg.homePension), 'text-cyan-300') +
+    row('상속·증여 (세후)', fm(lg.inheritance + lg.giftRecv), 'text-emerald-300') +
+    row('정부 지원 (부모급여·아동수당·장려금·기초생활)', fm(lg.welfare + lg.childBenefit), 'text-cyan-300') +
+    sec('② 세금·사회보험 ' + fm(taxes) + ` (소득의 ${Math.round(taxes / Math.max(1, income) * 100)}%)`) +
+    row('근로·종합소득세 + 지방소득세', fm(lg.incomeTax), 'text-rose-300') +
+    row('국민연금 보험료 (본인)', fm(lg.npPaid), 'text-rose-300') +
+    row('건강·장기요양·고용보험 (배우자 포함)', fm(lg.social), 'text-rose-300') +
+    row('은퇴 후 지역 건강보험료', fm(lg.healthRetiree), 'text-rose-300') +
+    row('재산세·종합부동산세', fm(lg.propTax), 'text-rose-300') +
+    row('금융소득세·연금소득세', fm(lg.finTax), 'text-rose-300') +
+    row('퇴직소득세 / 증여세 / 상속세(받을 때)', `${fm(lg.retireTax)} / ${fm(lg.giftTax)} / ${fm(lg.inheritTax)}`, 'text-rose-300') +
+    row('사후 상속세 (유족 부담, 별도)', fm(lg.estateTax), 'text-rose-400') +
+    sec('③ 쓴 돈 ' + fm(lg.living + home + kids + fam + medIns + etc)) +
+    row(`생활비 (식비·교통·통신·여가) — 성인기 월평균 소비 ${fm(monthlySpend)} (가계동향 평균 293만)`, fm(lg.living)) +
+    row('주거비 (월세·전세대출 이자) + 대출이자', `${fm(lg.rent)} + ${fm(lg.interest)}`) +
+    (L.kids.length ? row(`자녀 양육 기본비 · 사교육비 (${L.kids.length}명)`, `${fm(lg.kidsBase)} · ${fm(lg.kidsEdu)}`) : row('자녀 양육비', '자녀 없음')) +
+    (lg.wedding ? row('결혼 비용 (본인 부담)', fm(lg.wedding)) : '') +
+    row('부모님 용돈·간병·형제 지원 등 가족 지출', fm(lg.familyOut), 'text-rose-300') +
+    row('민간보험료 + 의료비 순부담', `${fm(lg.premium)} + ${fm(Math.max(0, lg.oop - lg.silson - lg.support))}`, 'text-amber-300') +
+    (lg.carCost ? row('자동차 (할부·유지비)', fm(lg.carCost)) : '') +
+    (lg.loanRepay ? row('학자금 대출 상환', fm(lg.loanRepay)) : '') +
+    (lg.selfLoss ? row('스스로 선택한 손실 (코인·투자사기·사치)', fm(lg.selfLoss), 'text-rose-400') : '');
+  const parts = [['세금·사회보험', taxes, '#f43f5e'], ['생활비', lg.living, '#64748b'], ['주거', home, '#f59e0b'], ['자녀·결혼', kids, '#a78bfa'], ['가족 지원', fam, '#fb7185'], ['보험·의료', medIns, '#22d3ee'], ['기타', etc, '#94a3b8']].filter(x => x[1] > 0);
+  const ptot = parts.reduce((a, x) => a + x[1], 0) || 1;
+  $('repSpendBar').innerHTML = `<div class="flex h-4 rounded-full overflow-hidden border border-slate-700">${parts.map(([k, v, c]) => `<div title="${k} ${fm(v)}" style="width:${v / ptot * 100}%;background:${c}"></div>`).join('')}</div>
+    <div class="flex flex-wrap gap-x-3 gap-y-1 mt-1.5 text-[11px] text-slate-300">${parts.map(([k, v, c]) => `<span><span class="inline-block w-2 h-2 rounded-sm mr-1" style="background:${c}"></span>${k} ${Math.round(v / ptot * 100)}%</span>`).join('')}</div>`;
+  const AG = KL.AGEG[L.playerAge];
+  $('repAgeFocus').classList.toggle('hidden', !AG);
+  if (AG) {
+    const ev = lg.events.filter(e => e.cat !== 'ltc');
+    const acc = ev.filter(e => e.cat === 'injury').length, dz = ev.filter(e => ['cancer', 'bh', 'disease'].includes(e.cat)).length;
+    $('repAgeFocus').innerHTML = `<div class="font-extrabold text-cyan-300">🎯 ${esc(L.playerAge)} 플레이어 맞춤: ${esc(AG.focus)}</div>
+      <div class="text-slate-200 leading-relaxed">${esc(AG.info)}</div>
+      <div class="text-slate-400">이번 인생에서 사고·상해 ${acc}건, 질병 ${dz}건${lg.selfLoss ? `, 스스로 선택한 자산 손실 ${fm(lg.selfLoss)}` : ''}을 겪었습니다. 인생관(${KL.PERSONAS[L.persona].label}) 효과: ${esc(KL.PERSONAS[L.persona].effect)}</div>`;
+  }
   $('repChoicesList').innerHTML = L.choices.filter(c => c.k !== 'poll40').map(c => `<div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800"><span class="font-bold text-amber-300">${c.age}세 ${esc((KL.DEC[c.k] || { short: c.k === 'remodel' ? '보장 리모델링' : c.k }).short)}</span> ${c.src === 'auto' ? '🤖' : ''}<br><span class="text-slate-300">${esc(c.l || c.o)}</span></div>`).join('') || '<div class="text-slate-500">기록 없음</div>';
   $('repKeyEventsList').innerHTML = lg.events.filter(e => e.cat !== 'ltc').slice(-12).map(e => `<div class="p-2.5 rounded-lg bg-slate-950 border ${e.crisis ? 'border-rose-500/50' : 'border-slate-800'}"><b class="text-cyan-300">${e.age}세</b> ${esc(e.title)}<br><span class="text-slate-400">진료비 ${fm(e.gross + (e.care || 0))}${e.care ? ` (간병 ${fm(e.care)})` : ''} · 보험금 ${fm(e.silson + e.fixed)}${e.support ? ` · 재난적의료비 ${fm(e.support)}` : ''}<br>의료비 순부담 ${fm(e.net - e.loss)}${e.loss ? ` + 소득 공백 ${fm(e.loss)}` : ''}${e.crisis ? ' · <span class="text-rose-400">유동성 위기</span>' : ''}</span></div>`).join('') + (lg.events.some(e => e.cat === 'ltc') ? `<div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800"><b class="text-cyan-300">노년기</b> 장기요양·간병 ${lg.events.filter(e => e.cat === 'ltc').length}년</div>` : '') || '<div class="text-slate-500">큰 질병·사고 없이 지나갔습니다</div>';
   const it = L.interests, tot = Object.values(it).reduce((a, b) => a + b, 0) || 1;
@@ -2754,7 +3294,8 @@ let whatifData = null;
 function computeWhatif() {
   const cf = KL.counterfactuals(L);
   const mc = KL.monteCarlo(L, 200);
-  whatifData = { cf, mc };
+  let alt = null; try { alt = KL.altChoices(L); } catch (e) { alt = null; }
+  whatifData = { cf, mc, alt };
   renderWhatif();
 }
 const pct = v => `${Math.round(v * 100)}%`;
@@ -2775,13 +3316,13 @@ function renderWhatif() {
     <div class="p-4 rounded-2xl bg-slate-900 border border-amber-500/40 space-y-1.5"><div class="text-xs font-bold text-amber-300">③ 평균 수명 · 85세 도달률 (200회)</div>
       <div class="text-xl font-black text-white">${mcA.age.toFixed(1)}세 → ${mcS.age.toFixed(1)}세</div>
       <p class="text-xs text-slate-300 leading-relaxed">실제 선택 vs 표준보장. 85세 도달 ${pct(mcA.reach85)} → ${pct(mcS.reach85)}. 수명 차이는 주로 치료 선택 가능 여부에서 생기며, 이 게임에서는 크지 않게 설정했습니다.</p></div>`;
-  const cols = ['전략', '사망 연령', '최종 순자산', '보험료 납입', '보험금 수령', '의료비 내 부담', '위기/치료하향'];
+  const cols = ['전략', '사망 연령', '최종 순자산', '세금 합계', '상속세 후 유족', '보험료 납입', '보험금 수령', '의료비 내 부담', '위기/치료하향'];
   $('cfHead').innerHTML = '<tr>' + cols.map(c => `<th class="p-2.5 whitespace-nowrap">${c}</th>`).join('') + '</tr>';
-  $('cfBody').innerHTML = cf.map(x => `<tr class="${x.st.id === 'actual' ? 'bg-rose-950/20' : ''}"><td class="p-2.5 font-bold ${x.st.id === 'actual' ? 'text-rose-300' : 'text-slate-200'} whitespace-nowrap">${x.st.short}</td><td class="p-2.5">${x.r.finalAge}세</td><td class="p-2.5 font-bold ${x.r.netWorth < 0 ? 'text-rose-400' : 'text-emerald-300'}">${fm(x.r.netWorth)}</td><td class="p-2.5">${fm(x.r.premium)}</td><td class="p-2.5">${fm(x.r.payout)}</td><td class="p-2.5">${fm(x.r.medBurden)}</td><td class="p-2.5">${x.r.crisis} / ${x.r.downgrade}</td></tr>`).join('');
+  $('cfBody').innerHTML = cf.map(x => `<tr class="${x.st.id === 'actual' ? 'bg-rose-950/20' : ''}"><td class="p-2.5 font-bold ${x.st.id === 'actual' ? 'text-rose-300' : 'text-slate-200'} whitespace-nowrap">${x.st.short}</td><td class="p-2.5">${x.r.finalAge}세</td><td class="p-2.5 font-bold ${x.r.netWorth < 0 ? 'text-rose-400' : 'text-emerald-300'}">${fm(x.r.netWorth)}</td><td class="p-2.5 text-rose-300">${fm(x.r.taxTotal)}</td><td class="p-2.5">${fm(x.r.heirNet)}</td><td class="p-2.5">${fm(x.r.premium)}</td><td class="p-2.5">${fm(x.r.payout)}</td><td class="p-2.5">${fm(x.r.medBurden)}</td><td class="p-2.5">${x.r.crisis} / ${x.r.downgrade}</td></tr>`).join('');
   $('mcN').textContent = mc.n;
-  const mcols = ['전략', '평균 수명', '순자산 중앙값', '하위 10%', '상위 10%', '의료비 위기', '치료 하향', '채무조정', '평균 보험료→보험금'];
+  const mcols = ['전략', '평균 수명', '순자산 중앙값', '하위 10%', '상위 10%', '평균 세금', '의료비 위기', '치료 하향', '채무조정', '평균 보험료→보험금'];
   $('mcHead').innerHTML = '<tr>' + mcols.map(c => `<th class="p-2.5 whitespace-nowrap">${c}</th>`).join('') + '</tr>';
-  $('mcBody').innerHTML = KL.STRATEGIES.map(st => { const r = mc.res[st.id]; return `<tr class="${st.id === 'actual' ? 'bg-rose-950/20' : ''}"><td class="p-2.5 font-bold whitespace-nowrap">${st.short}</td><td class="p-2.5">${r.age.toFixed(1)}세</td><td class="p-2.5 font-bold text-emerald-300">${fm(r.med)}</td><td class="p-2.5 ${r.p10 < 0 ? 'text-rose-400' : ''}">${fm(r.p10)}</td><td class="p-2.5">${fm(r.p90)}</td><td class="p-2.5">${pct(r.crisis)}</td><td class="p-2.5">${pct(r.downgrade)}</td><td class="p-2.5">${pct(r.bankrupt)}</td><td class="p-2.5 whitespace-nowrap">${fm(r.premium)} → ${fm(r.payout)}</td></tr>`; }).join('');
+  $('mcBody').innerHTML = KL.STRATEGIES.map(st => { const r = mc.res[st.id]; return `<tr class="${st.id === 'actual' ? 'bg-rose-950/20' : ''}"><td class="p-2.5 font-bold whitespace-nowrap">${st.short}</td><td class="p-2.5">${r.age.toFixed(1)}세</td><td class="p-2.5 font-bold text-emerald-300">${fm(r.med)}</td><td class="p-2.5 ${r.p10 < 0 ? 'text-rose-400' : ''}">${fm(r.p10)}</td><td class="p-2.5">${fm(r.p90)}</td><td class="p-2.5 text-rose-300">${fm(r.tax)}</td><td class="p-2.5">${pct(r.crisis)}</td><td class="p-2.5">${pct(r.downgrade)}</td><td class="p-2.5">${pct(r.bankrupt)}</td><td class="p-2.5 whitespace-nowrap">${fm(r.premium)} → ${fm(r.payout)}</td></tr>`; }).join('');
   // 요약 문장
   const R = mc.res, b = [];
   b.push(`<b class="text-amber-300">보험</b> — 표준보장은 무보험 대비 평균 ${fm(R.standard.premium)}을 더 내고 ${fm(R.standard.payout - R.noneSave.payout)}을 더 받습니다. 대신 의료비 위기 확률이 ${pct(R.noneSave.crisis)}에서 ${pct(R.standard.crisis)}로, 치료 하향 확률이 ${pct(R.noneSave.downgrade)}에서 ${pct(R.standard.downgrade)}로 바뀝니다. 보험의 가치는 평균 수익보다 '나쁜 해'의 충격을 줄이는 데 있습니다.`);
@@ -2790,6 +3331,33 @@ function renderWhatif() {
   b.push(`<b class="text-emerald-300">재테크</b> — 무보험+공격투자는 상위 10%가 ${fm(R.aggressive.p90)}로 크지만 하위 10%는 ${fm(R.aggressive.p10)}입니다. 같은 사건에서 질병과 폭락이 겹치면 투자자산을 손실 구간에서 팔아 치료비를 대야 합니다.`);
   const ch = L.choices.find(c => c.k === 'fin28');
   if (ch) b.push(`<b class="text-white">나의 28세 선택</b>은 "${esc(ch.l)}"였습니다. 하지 않은 다른 선택의 결과는 위 표에서 같은 인생으로 비교할 수 있습니다.`);
+  // 모든 대비를 다 했을 때
+  const BE = cf.find(x => x.st.id === 'best'), mB = mc.res.best;
+  if (BE && mB) {
+    const d = BE.r.netWorth - A.netWorth;
+    $('bestBox').innerHTML = `<div class="font-extrabold text-emerald-300">🌟 모든 것을 다 준비했다면 — 잘 살았을 수도 있는 경우의 수</div>
+      <div class="text-slate-300 leading-relaxed">표준보장+간병 특약, 청년미래적금·연금저축·ISA, 퇴직연금 DC(TDF)·IRP 연금수령, 45세 연금 증액, 2년마다 정밀검진·매년 운동, 스몰웨딩·충동투자 거절까지 <b>모두 선택한 나</b>입니다.</div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+        <div class="p-2 rounded-lg bg-slate-950 border border-slate-800"><div class="text-[11px] text-slate-400">이번 인생 그대로</div><div class="font-black text-white">${BE.r.finalAge}세 · ${fm(BE.r.netWorth)}</div><div class="text-[11px] ${d >= 0 ? 'text-emerald-300' : 'text-rose-300'}">실제 대비 ${d >= 0 ? '+' : ''}${fm(d)}</div></div>
+        <div class="p-2 rounded-lg bg-slate-950 border border-slate-800"><div class="text-[11px] text-slate-400">200번 평균 수명</div><div class="font-black text-white">${mB.age.toFixed(1)}세</div><div class="text-[11px] text-slate-400">실제 선택 ${mc.res.actual.age.toFixed(1)}세</div></div>
+        <div class="p-2 rounded-lg bg-slate-950 border border-slate-800"><div class="text-[11px] text-slate-400">순자산 중앙값 / 하위 10%</div><div class="font-black text-white">${fm(mB.med)}</div><div class="text-[11px] text-slate-400">하위 10% ${fm(mB.p10)} (실제 ${fm(mc.res.actual.p10)})</div></div>
+        <div class="p-2 rounded-lg bg-slate-950 border border-slate-800"><div class="text-[11px] text-slate-400">의료비 위기 / 치료 하향</div><div class="font-black text-white">${pct(mB.crisis)} / ${pct(mB.downgrade)}</div><div class="text-[11px] text-slate-400">실제 ${pct(mc.res.actual.crisis)} / ${pct(mc.res.actual.downgrade)}</div></div>
+      </div>
+      <div class="text-[11px] text-slate-400">대비에는 비용이 듭니다(보험료·검진비·저축으로 줄어든 소비). 그래서 '모든 대비'가 항상 자산 1등은 아니지만, 나쁜 해의 충격과 치료를 포기할 확률을 가장 크게 줄입니다.</div>`;
+  }
+  // 선택 하나만 바꿨다면
+  const AL = whatifData.alt;
+  if (AL && AL.list.length) {
+    const sgn = v => `<span class="${v >= 0 ? 'text-emerald-300' : 'text-rose-300'}">${v >= 0 ? '+' : ''}${fm(v)}</span>`;
+    $('altChoiceList').innerHTML = AL.list.map(x => {
+      const best = x.alts.slice().sort((a, b) => b.dHeir - a.dHeir)[0];
+      return `<div class="p-2.5 rounded-lg bg-slate-950 border ${best && best.dHeir > 3000 ? 'border-amber-500/40' : 'border-slate-800'}">
+        <div><b class="text-amber-300">${x.age}세 ${esc(x.short)}</b> ${x.src === 'auto' ? '🤖' : ''} · 내 선택: <span class="text-white">${esc(x.mine)}</span></div>
+        <div class="mt-1 space-y-0.5">${x.alts.map(a => `<div class="flex justify-between gap-2"><span class="text-slate-400">↳ ${esc(a.label)}</span><span class="whitespace-nowrap">${sgn(a.dHeir)}${a.dAge ? ` · 수명 ${a.dAge > 0 ? '+' : ''}${a.dAge}년` : ''}${Math.abs(a.dTax) >= 100 ? ` · 세금 ${a.dTax > 0 ? '+' : ''}${fm(a.dTax)}` : ''}</span></div>`).join('')}</div></div>`;
+    }).join('');
+    const top = AL.list.flatMap(x => x.alts.map(a => Object.assign({ x }, a))).sort((p, q) => q.dHeir - p.dHeir)[0];
+    if (top && top.dHeir > 0) b.push(`<b class="text-amber-300">가장 아쉬운 기로</b> — ${top.x.age}세 「${esc(top.x.short)}」에서 "${esc(top.label)}"을(를) 골랐다면 남긴 재산이 ${fm(top.dHeir)} 더 많았습니다${top.dAge ? ` (수명 ${top.dAge > 0 ? '+' : ''}${top.dAge}년)` : ''}.`);
+  } else $('altChoiceList').innerHTML = '<div class="text-slate-500">비교할 선택 기록이 없습니다.</div>';
   $('whatifBullets').innerHTML = b.map(x => `<div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800 leading-relaxed text-slate-200">${x}</div>`).join('');
   const evs = L.ledger.events.filter(e => e.cat !== 'ltc');
   $('whatifEventCareList').innerHTML = evs.length ? evs.slice(-10).map(e => `<div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800"><b class="text-cyan-300">${e.age}세</b> ${esc(e.title)}<br>
@@ -3101,7 +3669,7 @@ function renderAdmin() {
   // 기로별 선택 비율
   const byKey = {};
   P.forEach(p => (p.choices || []).filter(chMatch).forEach(c => { if (c.k === 'remodel') return; byKey[c.k] = byKey[c.k] || {}; const o = byKey[c.k][c.o] = byKey[c.k][c.o] || { n: 0, l: c.l }; o.n++; }));
-  const order = ['edu13', 'career19', 'ins19', 'fin28', 'marry32', 'family35', 'self35', 'house38', 'poll40', 'career43', 'mid50', 'retire60', 'late72', 'treat_cancer', 'treat_bh', 'parent_care', 'sibling_loan', 'child_sick', 'gift31'];
+  const order = ['edu13', 'teen16', 'career19', 'ins19', 'invest25', 'pension26', 'tempt27', 'fin28', 'job30', 'marry32', 'wed32', 'family35', 'self35', 'house38', 'poll40', 'checkup40', 'career43', 'pension45', 'mid50', 'retire58', 'retire60', 'late72', 'kid_edu', 'treat_cancer', 'treat_bh', 'dz_disc', 'dz_mental', 'dz_eye', 'dz_knee', 'parent_care', 'sibling_loan', 'child_sick', 'gift31'];
   const keyHtml = order.filter(k => byKey[k]).map(k => {
     const opts = Object.entries(byKey[k]).sort((a, b) => b[1].n - a[1].n), t = opts.reduce((a, b) => a + b[1].n, 0);
     return `<div class="p-3 rounded-lg bg-slate-950 border border-slate-800 space-y-1.5"><div class="text-xs font-extrabold text-amber-300">${esc(KL.DEC[k].short)} <span class="text-slate-500 font-normal">(${t}건)</span></div>${opts.map(([o, v]) => barRow(v.l || o, v.n / t, `${pct(v.n / t)} (${v.n})`, '#f59e0b')).join('')}</div>`;
