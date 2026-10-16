@@ -486,10 +486,17 @@
             <select id="admRange" onchange="renderAdmin()" class="px-2 py-1.5 rounded-lg text-xs bg-slate-900 border border-slate-700 text-slate-200">
               <option value="all">전체 기간</option><option value="1">오늘(24시간)</option><option value="7">최근 7일</option><option value="30">최근 30일</option>
             </select>
+            <select id="admGender" onchange="renderAdmin()" class="px-2 py-1.5 rounded-lg text-xs bg-slate-900 border border-slate-700 text-slate-200">
+              <option value="all">성별 전체</option><option>남성</option><option>여성</option><option>응답 안 함</option>
+            </select>
+            <select id="admAge" onchange="renderAdmin()" class="px-2 py-1.5 rounded-lg text-xs bg-slate-900 border border-slate-700 text-slate-200">
+              <option value="all">연령 전체</option><option>10대</option><option>20대</option><option>30대</option><option>40대</option><option>50대</option><option>60대 이상</option>
+            </select>
             <select id="admSrc" onchange="renderAdmin()" class="px-2 py-1.5 rounded-lg text-xs bg-slate-900 border border-slate-700 text-slate-200">
               <option value="all">직접+자동 선택</option><option value="manual">직접 선택만</option><option value="auto">자동 모드만</option>
             </select>
             <button onclick="loadAdminData()" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-200 border border-slate-700">🔄 새로고침</button>
+            <button onclick="exportCSV('users')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">📥 사용자 CSV</button>
             <button onclick="exportCSV('sessions')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">📥 세션 CSV</button>
             <button onclick="exportCSV('plays')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">📥 플레이 CSV</button>
             <button onclick="exportCSV('choices')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">📥 선택 CSV</button>
@@ -1679,7 +1686,7 @@ const TRK = (function () {
     saveSession(true); savePlay(true);
   }
   function profile(p) { Object.assign(sess, p); saveSession(true); }
-  function compactChoices(L) { return L.choices.map(c => ({ k: c.k, o: c.o, l: c.l || c.o, a: c.age, s: c.src === 'auto' ? 'a' : 'm', t: (c.tags || []).join(',') })); }
+  function compactChoices(L) { return L.choices.map(c => ({ k: c.k, o: c.o, l: c.l || c.o, a: c.age, s: c.src === 'auto' ? 'a' : 'm', t: (c.tags || []).join(','), d: c.dt || 0 })); }
   function startPlay(L, meta) {
     sess.plays++;
     play = {
@@ -1715,6 +1722,11 @@ const TRK = (function () {
   function action(t) { if (play) { play.actions[t] = (play.actions[t] || 0) + 1; savePlay(false); } }
   function setPending(key) { sess.pendingKey = key || ''; saveSession(true); }
   function mark(k, v) { sess[k] = v; if (play) play[k] = v; saveSession(true); savePlay(true); }
+  function view(name) {
+    sess.views = sess.views || {}; sess.views[name] = (sess.views[name] || 0) + 1;
+    if (play) { play.views = play.views || {}; play.views[name] = (play.views[name] || 0) + 1; }
+    saveSession(false); savePlay(false);
+  }
 
   async function loadAll() {
     if (DB) {
@@ -1738,12 +1750,16 @@ const TRK = (function () {
     } catch (e) { return 1; }
   }
   saveSession(true);
-  return { sess, get play() { return play; }, stage, profile, startPlay, updatePlay, endPlay, action, setPending, mark, loadAll, online, get remoteOk() { return remoteOk; } };
+  return { sess, get play() { return play; }, stage, profile, startPlay, updatePlay, endPlay, action, setPending, mark, view, loadAll, online, get remoteOk() { return remoteOk; } };
 })();
 
 async function refreshOnline() { $('onlineCountText').textContent = await TRK.online(); }
 refreshOnline(); setInterval(refreshOnline, 30000);
-function trackConsult(ch) { TRK.mark('consult', ch); TRK.stage('action'); }
+function trackConsult(ch) {
+  TRK.mark('consult', ch); TRK.mark('consultAt', TRK.sess.dur); TRK.view('consult_' + ch);
+  if (L) TRK.mark('consultAge', L.age);
+  TRK.stage('action');
+}
 
 /* =====================================================================
    시작 화면
@@ -1873,6 +1889,7 @@ function handlePending() {
   showDecision(spec);
 }
 function showDecision(spec) {
+  decisionShownAt = Date.now();
   playChime('milestone');
   TRK.setPending(spec.key);
   switchRightTab('live');
@@ -1898,9 +1915,12 @@ function showDecision(spec) {
   updateUI();
 }
 function hideDecision() { $('milestoneAlertBanner').classList.add('hidden'); $('decisionCardBox').classList.add('hidden'); TRK.setPending(''); }
+let decisionShownAt = 0;
 function chooseOption(id) {
   if (!L.pending) return;
+  const nBefore = L.choices.length;
   if (!KL.resolve(L, id, 'manual')) return;
+  const c = L.choices[nBefore]; if (c && decisionShownAt) c.dt = Math.min(600, Math.max(1, Math.round((Date.now() - decisionShownAt) / 1000)));
   hideDecision();
   TRK.updatePlay(L, true);
   if (!L.alive) { finishLife(); return; }
@@ -1934,6 +1954,7 @@ function doAnnualAction(type) {
 }
 let tempIns = [];
 function openInsuranceShopModal() {
+  TRK.view('shop');
   if (!L || !L.alive) return;
   if (L.age < 19) { showToast('19세 이후부터 보장을 직접 바꿀 수 있어요'); return; }
   tempIns = Object.keys(L.ins).filter(id => id !== 'packaged');
@@ -2026,6 +2047,7 @@ function copyFullHistory() {
   navigator.clipboard.writeText(L.history.map(h => `[${h.age}세] ${h.text}`).join('\n')).then(() => showToast('📋 인생 히스토리를 복사했습니다'));
 }
 function switchRightTab(tab) {
+  if (L && tab !== 'live') TRK.view('tab_' + tab);
   rightTab = tab;
   ['live', 'history', 'family'].forEach(t => {
     $('rightTab' + t[0].toUpperCase() + t.slice(1)).classList.toggle('hidden', t !== tab);
@@ -2136,7 +2158,7 @@ function switchEndTab(t) {
   $('endTabContentWhatif').classList.toggle('hidden', t !== 'whatif');
   $('endTabBtnSummary').className = 'px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black ' + (t === 'summary' ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 shadow' : 'bg-slate-800 text-slate-200 border border-slate-700');
   $('endTabBtnWhatif').className = 'px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black ' + (t === 'whatif' ? 'bg-gradient-to-r from-amber-400 to-emerald-400 text-slate-950 shadow' : 'bg-slate-800 text-amber-300 border border-amber-500/40');
-  if (t === 'whatif') { TRK.stage('whatif'); TRK.mark('whatifViewed', true); }
+  if (t === 'whatif') { TRK.stage('whatif'); TRK.mark('whatifViewed', true); TRK.view('whatif'); }
 }
 
 // ---------- 하지 않은 선택 ----------
@@ -2203,7 +2225,7 @@ function reportText() {
 function sendReportToExpert() {
   const t = reportText();
   (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { $('expertModalText').textContent = '결과 요약을 클립보드에 복사했습니다. 아래 채널에서 붙여넣거나, 저장한 보고서 이미지를 보내 주세요.'; }).catch(() => { $('expertModalText').textContent = '아래 채널에서 보고서 이미지를 보내 상담을 받아보세요.'; });
-  TRK.mark('consult', TRK.sess.consult || 'modal'); TRK.stage('action');
+  TRK.mark('consultOpen', true); TRK.view('consultModal'); TRK.stage('action');
   $('expertModal').classList.remove('hidden');
 }
 function shareGameLink() {
@@ -2218,7 +2240,7 @@ function restartNewLife() {
   $('step1').classList.add('hidden'); $('step2').classList.remove('hidden'); lastActionAge = -1;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-function openExpertModal() { $('expertModalText').textContent = '실제 보험·가족력 리스크가 궁금하다면 아래 채널에서 1:1 상담을 받아보세요.'; $('expertModal').classList.remove('hidden'); }
+function openExpertModal() { TRK.mark('consultOpen', true); TRK.view('consultModal'); $('expertModalText').textContent = '실제 보험·가족력 리스크가 궁금하다면 아래 채널에서 1:1 상담을 받아보세요.'; $('expertModal').classList.remove('hidden'); }
 function closeExpertModal() { $('expertModal').classList.add('hidden'); }
 
 /* =====================================================================
@@ -2251,12 +2273,47 @@ const PERSONA_L = k => (KL.PERSONAS[k] || { label: k || '-' }).label;
 const TIER_L = t => t ? `${t}분위` : '-';
 const DNA_L = id => (KL.DNA.find(d => d.id === id) || { label: id || '-' }).label;
 
+function choiceName(c) { const sh = (KL.DEC[c.k] || { short: c.k === 'remodel' ? '보장 리모델링' : c.k }).short; return /^\d+세/.test(sh) ? sh : `${c.a}세 ${sh}`; }
+function demoOk(x) {
+  const g = $('admGender').value, a = $('admAge').value;
+  return (g === 'all' || x.gender === g) && (a === 'all' || x.ageGroup === a);
+}
+// 사용자(방문 세션) 단위로 프로필·선택·관심사를 묶는다
+function buildUsers(S, P) {
+  const bySid = {};
+  P.forEach(p => (bySid[p.sid] = bySid[p.sid] || []).push(p));
+  return S.filter(s => s.nick || s.ageGroup || s.gender).map(s => {
+    const plays = (bySid[s.sid] || []).sort((a, b) => a.start - b.start);
+    const it = {}; Object.keys(KL.TAGS).forEach(k => it[k] = 0);
+    const choices = [];
+    plays.forEach(p => { (p.choices || []).forEach(c => { choices.push(c); (c.t || '').split(',').filter(Boolean).forEach(t => { if (it[t] != null) it[t]++; }); }); });
+    const explicit = plays.map(p => p.explicit).filter(Boolean);
+    explicit.forEach(e => { if (it[e] != null) it[e] += 2; });
+    const tot = Object.values(it).reduce((a, b) => a + b, 0);
+    const top = Object.entries(it).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, v]) => ({ k, r: tot ? v / tot : 0 }));
+    const last = plays[plays.length - 1] || {};
+    return { s, plays, choices, interests: it, top, explicit, last, score: engageScore(s, plays), real: (s.dur || 0) >= 60 && (s.stage || 0) >= STAGE_IDX.gacha };
+  }).sort((a, b) => (b.s.last || 0) - (a.s.last || 0));
+}
+// 몰입도 점수(0~100): 체류·진행·직접 선택·탐색 행동·전환 행동을 합산 (게임 운영용 지표)
+function engageScore(s, plays) {
+  const choices = plays.reduce((n, p) => n + (p.choices || []).filter(c => c.s === 'm').length, 0);
+  const acts = plays.reduce((n, p) => n + Object.values(p.actions || {}).reduce((a, b) => a + b, 0), 0);
+  const v = s.views || {};
+  const explore = (v.whatif ? 4 : 0) + (v.shop ? 3 : 0) + (v.tab_history ? 2 : 0) + (v.tab_family ? 1 : 0);
+  const conv = (s.consult ? 6 : 0) + (s.consultOpen ? 2 : 0) + (s.shared ? 3 : 0) + (s.saved ? 3 : 0);
+  return Math.round(Math.min(30, (s.dur || 0) / 20) + (s.stage || 0) / 9 * 25 + Math.min(15, choices * 1.2) + Math.min(10, acts) + Math.min(10, explore) + Math.min(10, conv));
+}
+let admUserSort = 'dur', admRealOnly = true;
+let admUserQuery = '';
+function admSearch(v) { admUserQuery = v; renderAdmin(); setTimeout(() => { const el = $('admUserSearch'); if (el) { el.focus(); el.setSelectionRange(v.length, v.length); } }, 0); }
+let admDemoKey = 'fin28';
 function admFilter() {
   const range = $('admRange').value, now = Date.now();
   const since = range === 'all' ? 0 : now - (+range) * 86400000;
   return {
-    sessions: (ADM.sessions || []).filter(s => s && (s.start || 0) >= since),
-    plays: (ADM.plays || []).filter(p => p && (p.start || 0) >= since),
+    sessions: (ADM.sessions || []).filter(s => s && (s.start || 0) >= since && demoOk(s)),
+    plays: (ADM.plays || []).filter(p => p && (p.start || 0) >= since && demoOk(p)),
     src: $('admSrc').value
   };
 }
@@ -2278,7 +2335,12 @@ function renderAdmin() {
   const done = P.filter(p => p.done);
   const f1 = v => total ? pct(v / total) : '0%';
 
+  const realN = S.filter(s => (s.dur || 0) >= 60 && (s.stage || 0) >= STAGE_IDX.gacha).length;
+  const consultN = S.filter(s => s.consult).length;
   const kpis = [
+    ['👤 총 생성 닉네임 (참여자)', `${nickSess.length}명`, 'text-amber-300'],
+    ['🎮 실제 참여자 (1분↑·가챠 시작)', `${realN}명`, 'text-emerald-300'],
+    ['💼 상담 링크 클릭율', `${total ? pct(consultN / total) : '0%'} (${consultN}명)`, 'text-amber-300'],
     ['🟢 실시간 접속 (45초)', `${online}명`, 'text-emerald-400'],
     ['누적 방문 / 순방문자', `${total} / ${visitors}명`, 'text-white'],
     ['누적 체류시간', tdur(totalDur), 'text-cyan-300'],
@@ -2286,13 +2348,97 @@ function renderAdmin() {
     ['바운스율 (가챠 전 이탈)', f1(bounce), 'text-rose-300'],
     ['플레이 중도 이탈률', started.length ? pct(midDrop / started.length) : '0%', 'text-rose-300'],
     ['전체 이탈률 (보고서 미도달)', f1(total - reached), 'text-rose-400'],
-    ['닉네임 생성 (고유 / 랜덤추천)', `${nickSess.length} (${nickUnique} / ${nickSess.length ? pct(nickRandom / nickSess.length) : '0%'})`, 'text-indigo-300'],
+    ['고유 닉네임 / 랜덤 추천 사용', `${nickUnique}개 / ${nickSess.length ? pct(nickRandom / nickSess.length) : '0%'}`, 'text-indigo-300'],
     ['인생 플레이 / 완주', `${P.length} / ${done.length}회`, 'text-white'],
     ['재방문자 비율', f1(S.filter(s => s.returning).length), 'text-amber-300'],
     ['모바일 비율', f1(S.filter(s => s.dev === 'mobile').length), 'text-slate-200'],
-    ['상담 클릭 / 공유 / 이미지 저장', `${S.filter(s => s.consult).length} / ${S.filter(s => s.shared).length} / ${S.filter(s => s.saved).length}`, 'text-amber-300']
+    ['상담창 열람 / 공유 / 이미지 저장', `${S.filter(s => s.consultOpen || s.consult).length} / ${S.filter(s => s.shared).length} / ${S.filter(s => s.saved).length}`, 'text-amber-300']
   ];
   let h = `<div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">${kpis.map(k => `<div class="p-3 rounded-xl bg-slate-900 border border-slate-800"><div class="text-[11px] text-slate-400">${k[0]}</div><div class="text-sm sm:text-base font-black ${k[2]} mt-0.5">${k[1]}</div></div>`).join('')}</div>`;
+
+  // ===== 사용자별 프로필·선택·관심사 =====
+  const tagColors2 = { health: '#10b981', wealth: '#f59e0b', education: '#38bdf8', career: '#a78bfa', family: '#f472b6', safety: '#818cf8', experience: '#fb923c' };
+  const users = buildUsers(S, P);
+  const q = admUserQuery.trim();
+  const sorters = { dur: (a, b) => (b.s.dur || 0) - (a.s.dur || 0), score: (a, b) => b.score - a.score, recent: (a, b) => (b.s.last || 0) - (a.s.last || 0) };
+  const shown = users.filter(u => (!admRealOnly || u.real) && (!q || (u.s.nick || '').includes(q))).sort(sorters[admUserSort]).slice(0, 200);
+  const nickTag = u => u.s.nickSrc === 'random' ? '<span class="text-[10px] text-indigo-300">추천</span>' : '<span class="text-[10px] text-slate-500">직접</span>';
+  const userRows = shown.map(u => {
+    const s = u.s, l = u.last;
+    const pick = k => { const c = u.choices.filter(c => c.k === k).pop(); return c ? esc(c.l || c.o) + (c.s === 'a' ? ' 🤖' : '') : '<span class="text-slate-600">-</span>'; };
+    const topHtml = u.top.length ? u.top.map(t => `<span class="inline-block px-1.5 py-0.5 rounded mr-1 mb-0.5 text-[10px] font-bold" style="background:${tagColors2[t.k]}22;color:${tagColors2[t.k]}">${KL.TAGS[t.k].split('·')[0]} ${Math.round(t.r * 100)}%</span>`).join('') : '<span class="text-slate-600">선택 전</span>';
+    const all = u.choices.length ? u.choices.map(c => `<div class="py-0.5 border-b border-slate-800/60"><b class="text-amber-300">${esc(choiceName(c))}</b> → ${esc(c.l || c.o)} ${c.s === 'a' ? '🤖' : ''} <span class="text-slate-500">[${(c.t || '').split(',').filter(Boolean).map(t => KL.TAGS[t]).join(', ')}]</span></div>`).join('') : '<div class="text-slate-500">아직 선택 기록이 없습니다</div>';
+    return `<tr class="border-t border-slate-800 align-top">
+      <td class="p-1.5 whitespace-nowrap text-slate-500">${new Date(s.start).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+      <td class="p-1.5 whitespace-nowrap"><b class="text-cyan-300">${esc(s.nick || '(미입력)')}</b> ${nickTag(u)}</td>
+      <td class="p-1.5 whitespace-nowrap font-bold text-white">${tdur(s.dur)}</td>
+      <td class="p-1.5 whitespace-nowrap"><span class="font-black" style="color:${u.score >= 70 ? '#10b981' : u.score >= 40 ? '#f59e0b' : '#94a3b8'}">${u.score}</span></td>
+      <td class="p-1.5 whitespace-nowrap">${s.consult ? '<span class="text-amber-300 font-bold">✅ ' + (s.consult === 'littly' ? '리틀리' : '인스타') + '</span>' : s.consultOpen ? '<span class="text-slate-400">창만 열람</span>' : '-'}</td>
+      <td class="p-1.5 whitespace-nowrap">${esc(s.gender || '-')}</td>
+      <td class="p-1.5 whitespace-nowrap">${esc(s.ageGroup || '-')}</td>
+      <td class="p-1.5 whitespace-nowrap">${PERSONA_L(s.persona || l.persona)}${s.auto ? ' 🤖' : ''}</td>
+      <td class="p-1.5 whitespace-nowrap">${STAGES[s.stage || 0][1]} · ${u.plays.length}회${l.done ? ' ✅' : ''}</td>
+      <td class="p-1.5 min-w-[140px]">${topHtml}</td>
+      <td class="p-1.5 whitespace-nowrap">${u.explicit.length ? u.explicit.map(e => KL.TAGS[e]).join(', ') : '-'}</td>
+      <td class="p-1.5">${pick('career19')}</td><td class="p-1.5">${pick('fin28')}</td><td class="p-1.5">${pick('marry32')}</td>
+      <td class="p-1.5 whitespace-nowrap">${l.done ? esc(l.finalAge + '세 · ') + fm(l.netWorth) : '-'}</td>
+      <td class="p-1.5"><details><summary class="cursor-pointer text-emerald-300 whitespace-nowrap">전체 ${u.choices.length}개</summary><div class="mt-1 text-[11px] min-w-[260px]">${all}</div></details></td></tr>`;
+  }).join('');
+  h += card(`👤 사용자별 프로필 · 선택 · 관심사 <span class="text-slate-500 font-normal">(프로필 입력 ${users.length}명 · 실제 참여자 ${users.filter(u => u.real).length}명 · 표시 ${shown.length}명)</span>`,
+    `<div class="flex items-center gap-2 flex-wrap"><input id="admUserSearch" value="${esc(q)}" oninput="admSearch(this.value)" placeholder="닉네임 검색" class="px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white w-40" />
+      <select onchange="admUserSort=this.value;renderAdmin()" class="px-2 py-1.5 rounded-lg text-xs bg-slate-950 border border-slate-700 text-slate-200">${[['dur', '⏱️ 체류시간 긴 순'], ['score', '🔥 몰입도 높은 순'], ['recent', '🕒 최신 접속 순']].map(o => `<option value="${o[0]}" ${admUserSort === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>
+      <label class="flex items-center gap-1 text-xs text-slate-300"><input type="checkbox" ${admRealOnly ? 'checked' : ''} onchange="admRealOnly=this.checked;renderAdmin()"> 실제 참여자만 (체류 1분↑ + 가챠 시작)</label><span class="text-[11px] text-slate-500">몰입도 = 체류·진행·직접 선택·탐색·상담/공유를 합산한 0~100점</span></div>
+    <div class="overflow-x-auto max-h-[520px] overflow-y-auto"><table class="w-full text-[11px] text-left"><thead class="text-slate-400 sticky top-0 bg-slate-900"><tr>${['접속', '닉네임', '체류', '몰입도', '상담', '성별', '연령대', '인생관', '진행', '관심사 TOP3', '40세 관심사', '19세 진로', '28세 재무', '32세 결혼', '결과', '선택 기록'].map(c => `<th class="p-1.5 whitespace-nowrap">${c}</th>`).join('')}</tr></thead><tbody>${userRows || '<tr><td colspan="16" class="p-3 text-slate-500">조건에 맞는 사용자가 없습니다</td></tr>'}</tbody></table></div>`);
+
+
+  // ===== 참여·관심도 핵심 =====
+  const allUsers = buildUsers(S, P);
+  const realUsers = allUsers.filter(u => u.real);
+  const rateOf = (arr, f) => arr.length ? f(arr).length / arr.length : 0;
+  // 연령대별 상담 전환
+  const ageRows = AGE_GROUPS.concat(['미입력']).map(a => {
+    const us = allUsers.filter(u => (u.s.ageGroup || '미입력') === a); if (!us.length) return '';
+    const rp = us.filter(u => (u.s.stage || 0) >= STAGE_IDX.report);
+    const consult = us.filter(u => u.s.consult).length, open = us.filter(u => u.s.consultOpen || u.s.consult).length;
+    const r = consult / us.length;
+    return `<tr class="border-t border-slate-800"><td class="p-1.5 text-slate-200">${a}</td><td class="p-1.5 text-center">${us.length}</td><td class="p-1.5 text-center">${tdur(avg(us.map(u => u.s.dur || 0)))}</td><td class="p-1.5 text-center">${avg(us.map(u => u.score)).toFixed(0)}</td><td class="p-1.5 text-center">${pct(rp.length / us.length)}</td><td class="p-1.5 text-center">${pct(open / us.length)}</td><td class="p-1.5 text-center font-black" style="background:rgba(245,158,11,${Math.min(0.6, r * 2).toFixed(2)})">${pct(r)} <span class="text-[10px] font-normal text-slate-300">(${consult})</span></td><td class="p-1.5 text-center">${rp.length ? pct(rp.filter(u => u.s.consult).length / rp.length) : '-'}</td><td class="p-1.5 text-center">${pct(rateOf(us, x => x.filter(u => u.s.shared)))}</td><td class="p-1.5 text-center">${pct(rateOf(us, x => x.filter(u => u.s.saved)))}</td></tr>`;
+  }).join('');
+  h += card('💼 연령대별 참여 · 전문가 상담 클릭율', `<div class="overflow-x-auto"><table class="w-full text-[11px]"><thead><tr class="text-slate-400">${['연령대', '사용자', '평균 체류', '평균 몰입도', '보고서 도달', '상담창 열람', '상담 링크 클릭율', '보고서 본 사람 중 클릭', '공유', '이미지 저장'].map(c => `<th class="p-1.5 whitespace-nowrap">${c}</th>`).join('')}</tr></thead><tbody>${ageRows || '<tr><td class="p-2 text-slate-500">데이터 없음</td></tr>'}</tbody></table></div><p class="text-[11px] text-slate-500">상담 링크 클릭 = 리틀리·인스타 링크를 실제로 누른 사용자. 상담창 열람 = 💬 버튼·💌 보내기로 창만 연 경우 포함.</p>`);
+
+  // 결과·경험별 상담 전환 (어떤 경험이 상담으로 이어지는가)
+  const doneU = allUsers.filter(u => u.last && u.last.done);
+  const seg = [
+    ['의료비 위기 경험함', u => u.last.crisis > 0], ['의료비 위기 없음', u => !(u.last.crisis > 0)],
+    ['돈 때문에 치료 하향', u => u.last.downgrade > 0], ['채무조정 겪음', u => !!u.last.bankrupt],
+    ['마지막에 민간보험 없음', u => (u.last.insEnd || 'none') === 'none'], ['마지막에 보험 보유', u => (u.last.insEnd || 'none') !== 'none'],
+    ['기대수명 전 사망', u => u.last.finalAge < (u.last.ch && u.last.ch.g === '여성' ? 86.6 : 80.8)], ['비교 탭(하지 않은 선택) 열람', u => !!(u.s.views || {}).whatif]
+  ];
+  const segRows = seg.map(([lab, f]) => { const g = doneU.filter(f); return g.length ? barRow(`${lab} (${g.length})`, g.filter(u => u.s.consult).length / g.length, pct(g.filter(u => u.s.consult).length / g.length), '#f59e0b') : ''; }).join('');
+  // 기로별 고민 시간
+  const dts = {};
+  P.forEach(p => (p.choices || []).forEach(c => { if (c.s === 'm' && c.d > 0) (dts[c.k] = dts[c.k] || []).push(c.d); }));
+  const dtE = Object.entries(dts).sort((a, b) => avg(b[1]) - avg(a[1]));
+  const dtMax = Math.max(1, ...dtE.map(x => avg(x[1])));
+  const dtRows = dtE.map(([k, a]) => barRow(`${(KL.DEC[k] || { short: k }).short} (${a.length})`, avg(a) / dtMax, `평균 ${avg(a).toFixed(1)}초`, '#38bdf8')).join('');
+  h += `<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+    ${card('🎯 어떤 경험이 상담으로 이어지나 (완주자 상담 클릭율)', `<div class="space-y-1.5 text-xs">${segRows || '<div class="text-slate-500">완주 데이터 없음</div>'}</div><p class="text-[11px] text-slate-500">게임 속 위기·보험 상태별로 실제 상담 링크를 누른 비율 — 상담 유도 문구를 어디에 둘지 판단하는 근거</p>`)}
+    ${card('🤔 기로별 고민 시간 (직접 선택)', `<div class="space-y-1.5 text-xs">${dtRows || '<div class="text-slate-500">데이터 없음</div>'}</div><p class="text-[11px] text-slate-500">선택지를 보고 결정하기까지 걸린 시간. 길수록 관심·고민이 큰 주제 (10분 이상은 자리 비움으로 보고 10분으로 자름)</p>`)}</div>`;
+
+  // 기능 사용률 · 재도전 · 접속 시간대
+  const feat = [
+    ['인생 히스토리 탭', u => (u.s.views || {}).tab_history], ['가족 탭', u => (u.s.views || {}).tab_family], ['보장 리모델링 창', u => (u.s.views || {}).shop],
+    ['하지 않은 선택 탭', u => (u.s.views || {}).whatif], ['자기관리 행동 1회 이상', u => u.plays.some(p => Object.values(p.actions || {}).some(v => v > 0))],
+    ['자동 모드 사용', u => u.s.auto || u.plays.some(p => p.auto || p.autoSwitch)], ['재도전 (2회 이상 플레이)', u => u.plays.length >= 2], ['재방문자', u => u.s.returning]
+  ];
+  const featRows = feat.map(([lab, f]) => barRow(lab, rateOf(realUsers, x => x.filter(f)), pct(rateOf(realUsers, x => x.filter(f))), '#a78bfa')).join('');
+  const hours = Array(24).fill(0); S.forEach(s => hours[new Date(s.start).getHours()]++);
+  const hMax = Math.max(1, ...hours);
+  const hourBars = `<div class="flex items-end gap-0.5 h-24">${hours.map((v, i) => `<div class="flex-1 flex flex-col items-center justify-end h-full" title="${i}시 ${v}명"><div class="w-full rounded-t" style="height:${(v / hMax * 100).toFixed(0)}%;background:#22d3ee;min-height:${v ? 2 : 0}px"></div></div>`).join('')}</div><div class="flex justify-between text-[10px] text-slate-500"><span>0시</span><span>6시</span><span>12시</span><span>18시</span><span>23시</span></div>`;
+  const days = ['일', '월', '화', '수', '목', '금', '토'], dc = Array(7).fill(0); S.forEach(s => dc[new Date(s.start).getDay()]++);
+  const dMax = Math.max(1, ...dc);
+  h += `<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+    ${card(`🧩 기능 사용률 (실제 참여자 ${realUsers.length}명 기준)`, `<div class="space-y-1.5 text-xs">${featRows}</div><p class="text-[11px] text-slate-500">어떤 기능에 흥미를 보이는지 — 낮은 기능은 위치·문구 개선 대상</p>`)}
+    ${card('🕒 접속 시간대 · 요일', `${hourBars}<div class="space-y-1 text-xs mt-2">${days.map((d, i) => barRow(d + '요일', dc[i] / dMax, `${dc[i]}명`, '#0ea5e9')).join('')}</div><p class="text-[11px] text-slate-500">인스타 업로드·홍보 시간대를 정할 때 참고</p>`)}</div>`;
 
   // 퍼널
   const fun = STAGES.map((st, i) => [st[1], S.filter(s => (s.stage || 0) >= i).length]);
@@ -2388,6 +2534,31 @@ function renderAdmin() {
     ${card('🧑‍🤝‍🧑 인생관 분포', `<div class="space-y-1.5 text-xs">${ex(pers, '#818cf8').replace(/\(\d+%\)/g, '')}</div>`)}</div>`;
   h += `<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">${card('🥄 출생 소득분위별 결과', grpTbl(tiers, '분위'))}${card('🧬 가족력별 결과', grpTbl(dnas, '가족력'))}</div>`;
 
+  // ===== 성별·연령대별 선택 비교 =====
+  const keyOpts = order.filter(k => byKey[k]);
+  if (!keyOpts.includes(admDemoKey) && keyOpts.length) admDemoKey = keyOpts[0];
+  const groups = [['전체', () => true]].concat(['남성', '여성'].map(g => [g, p => p.gender === g])).concat(AGE_GROUPS.map(a => [a, p => p.ageGroup === a]));
+  const optMap = {};
+  const gCount = groups.map(() => 0);
+  P.forEach(p => {
+    const cs = (p.choices || []).filter(chMatch).filter(c => c.k === admDemoKey);
+    cs.forEach(c => {
+      optMap[c.o] = optMap[c.o] || { l: c.l || c.o, n: groups.map(() => 0) };
+      groups.forEach((g, i) => { if (g[1](p)) { optMap[c.o].n[i]++; gCount[i]++; } });
+    });
+  });
+  const demoRows = Object.values(optMap).sort((a, b) => b.n[0] - a.n[0]).map(o => `<tr class="border-t border-slate-800"><td class="p-1.5 text-slate-200">${esc(o.l)}</td>${o.n.map((v, i) => { const r = gCount[i] ? v / gCount[i] : 0; return `<td class="p-1.5 text-center" style="background:rgba(245,158,11,${(r * 0.55).toFixed(2)})">${gCount[i] ? pct(r) : '-'}</td>`; }).join('')}</tr>`).join('');
+  const intRows = Object.keys(KL.TAGS).map(k => {
+    const vals = groups.map(g => { let n = 0, t = 0; P.filter(g[1]).forEach(p => (p.choices || []).filter(chMatch).forEach(c => (c.t || '').split(',').filter(Boolean).forEach(x => { t++; if (x === k) n++; }))); return t ? n / t : null; });
+    return `<tr class="border-t border-slate-800"><td class="p-1.5" style="color:${tagColors2[k]}">${KL.TAGS[k]}</td>${vals.map(r => `<td class="p-1.5 text-center" style="background:rgba(129,140,248,${r == null ? 0 : (r * 1.4).toFixed(2)})">${r == null ? '-' : pct(r)}</td>`).join('')}</tr>`;
+  }).join('');
+  const gh = `<tr class="text-slate-400"><th class="p-1.5 text-left">항목</th>${groups.map((g, i) => `<th class="p-1.5 whitespace-nowrap">${g[0]}<div class="text-[10px] text-slate-600 font-normal">n=${gCount[i]}</div></th>`).join('')}</tr>`;
+  const ghI = `<tr class="text-slate-400"><th class="p-1.5 text-left">관심사</th>${groups.map(g => `<th class="p-1.5 whitespace-nowrap">${g[0]}</th>`).join('')}</tr>`;
+  h += `<div class="grid grid-cols-1 xl:grid-cols-2 gap-3">
+    ${card('⚖️ 성별·연령대별 선택 비교', `<select onchange="admDemoKey=this.value;renderAdmin()" class="px-2 py-1.5 rounded-lg text-xs bg-slate-950 border border-slate-700 text-slate-200">${keyOpts.map(k => `<option value="${k}" ${k === admDemoKey ? 'selected' : ''}>${esc(KL.DEC[k].short)}</option>`).join('')}</select>
+      <div class="overflow-x-auto"><table class="w-full text-[11px]"><thead>${gh}</thead><tbody>${demoRows || '<tr><td class="p-2 text-slate-500">데이터 없음</td></tr>'}</tbody></table></div><p class="text-[11px] text-slate-500">각 열(성별·연령대) 안에서 선택지별 비율. n이 작으면 해석에 주의하세요.</p>`)}
+    ${card('🧭 성별·연령대별 관심사 비중', `<div class="overflow-x-auto"><table class="w-full text-[11px]"><thead>${ghI}</thead><tbody>${intRows}</tbody></table></div><p class="text-[11px] text-slate-500">선택지에 붙은 관심 태그의 비중. 색이 진할수록 그 집단의 관심이 큼.</p>`)}</div>`;
+
   // 최근 플레이 테이블
   const recent = P.slice().sort((a, b) => (b.last || 0) - (a.last || 0)).slice(0, 60);
   h += card('🗂️ 최근 플레이 (최대 60건)', `<div class="overflow-x-auto max-h-96 overflow-y-auto"><table class="w-full text-[11px] text-left"><thead class="text-slate-400 sticky top-0 bg-slate-900"><tr>${['시각', '닉네임', '연령/성별', '인생관', '출생', '진행', '28세 선택', '결과', '순자산', '체류'].map(c => `<th class="p-1.5 whitespace-nowrap">${c}</th>`).join('')}</tr></thead><tbody>${recent.map(p => { const c28 = (p.choices || []).find(c => c.k === 'fin28'); return `<tr class="border-t border-slate-800"><td class="p-1.5 whitespace-nowrap text-slate-500">${new Date(p.start).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td><td class="p-1.5 text-cyan-300">${esc(p.nick)}</td><td class="p-1.5">${esc(p.ageGroup)}/${esc(p.gender)}</td><td class="p-1.5">${PERSONA_L(p.persona)}${p.auto ? ' 🤖' : ''}</td><td class="p-1.5 whitespace-nowrap">${TIER_L(p.ch && p.ch.tier)}·${esc((DNA_L(p.ch && p.ch.dna) || '').slice(0, 8))}</td><td class="p-1.5">${p.maxAge || 0}세${p.done ? ' ✅' : ''}</td><td class="p-1.5">${esc(c28 ? c28.l : '-')}</td><td class="p-1.5">${p.done ? esc(p.finalAge + '세 ' + (p.cause || '')) : '-'}</td><td class="p-1.5 ${p.netWorth < 0 ? 'text-rose-400' : 'text-emerald-300'}">${p.netWorth != null ? fm(p.netWorth) : '-'}</td><td class="p-1.5">${tdur(p.dur)}</td></tr>`; }).join('')}</tbody></table></div>`);
@@ -2401,7 +2572,17 @@ function exportCSV(kind) {
   if (!ADM) return;
   const { sessions: S, plays: P } = admFilter();
   let rows = [];
-  if (kind === 'sessions') {
+  if (kind === 'users') {
+    const tk = Object.keys(KL.TAGS);
+    rows.push(['접속시각', '닉네임', '닉네임방식', '성별', '연령대', '인생관', '자동모드', '기기', '유입', '최종단계', '플레이수', '체류초', '실제참여자', '몰입도', '상담창열람', '상담링크클릭', '공유', '이미지저장', '비교탭열람', '관심사1순위', '관심사2순위', '관심사3순위', '40세관심사', ...tk.map(k => '관심_' + KL.TAGS[k]), '19세진로', '28세재무', '32세결혼', '최종나이', '최종순자산', '선택기록']);
+    buildUsers(S, P).sort((a, b) => (b.s.dur || 0) - (a.s.dur || 0)).forEach(u => {
+      const s = u.s, l = u.last, pick = k => { const c = u.choices.filter(c => c.k === k).pop(); return c ? (c.l || c.o) : ''; };
+      rows.push([new Date(s.start).toISOString(), s.nick, s.nickSrc, s.gender, s.ageGroup, s.persona, s.auto, s.dev, s.ref, STAGES[s.stage || 0][1], u.plays.length, s.dur, u.real, u.score, !!(s.consultOpen || s.consult), s.consult || '', !!s.shared, !!s.saved, !!(s.views || {}).whatif,
+        ...[0, 1, 2].map(i => u.top[i] ? KL.TAGS[u.top[i].k] : ''), u.explicit.map(e => KL.TAGS[e]).join('/'), ...tk.map(k => u.interests[k]),
+        pick('career19'), pick('fin28'), pick('marry32'), l.done ? l.finalAge : '', l.done ? l.netWorth : '',
+        u.choices.map(c => `${choiceName(c)}: ${c.l || c.o}`).join(' | ')]);
+    });
+  } else if (kind === 'sessions') {
     rows.push(['sid', 'vid', '시작', '마지막', '체류초', '기기', '유입', '재방문', '최종단계', '닉네임', '닉네임방식', '연령대', '성별', '인생관', '자동', '플레이수', '마지막나이', '이탈기로', '보고서', '상담', '공유', '저장']);
     S.forEach(s => rows.push([s.sid, s.vid, new Date(s.start).toISOString(), new Date(s.last).toISOString(), s.dur, s.dev, s.ref, s.returning, STAGES[s.stage || 0][1], s.nick, s.nickSrc, s.ageGroup, s.gender, s.persona, s.auto, s.plays, s.lastAge, s.pendingKey, s.reported, s.consult, s.shared, s.saved]));
   } else if (kind === 'plays') {
